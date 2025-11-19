@@ -20,6 +20,45 @@
     <p>Page successfully loaded. Placeholder for player input later.</p>
   </div>
 
+  <!-- Background rotation script -->
+<script>
+  const backgrounds = [
+    {% for img in image_files %}
+      "{{ url_for('static', filename=img) }}",
+    {% endfor %}
+  ];
+
+  const screen = document.getElementById("loading-screen");
+  let i = 0;
+
+  // preload all images first
+  const cache = [];
+  backgrounds.forEach(src => {
+    const img = new Image();
+    img.src = src;
+    cache.push(img);
+  });
+
+  // switch after each image finishes loading
+  function changeBackground() {
+    screen.classList.add("fade");
+    const nextImg = new Image();
+    nextImg.src = backgrounds[i];
+    nextImg.onload = () => {
+      setTimeout(() => {
+        screen.style.backgroundImage = `url(${nextImg.src})`;
+        screen.classList.remove("fade");
+        i = (i + 1) % backgrounds.length;
+      }, 1000);
+    };
+  }
+
+  // set first background immediately, then start cycling
+  screen.style.backgroundImage = `url(${backgrounds[0]})`;
+  setInterval(changeBackground, 4000);
+</script>
+
+
   <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
 </body>
 </html>

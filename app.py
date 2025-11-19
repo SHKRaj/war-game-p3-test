@@ -1,6 +1,7 @@
 
 # Imports - Flask is main class I use for web app, jsonify converts Python data into JSON HTTP responses.
 from flask import Flask, jsonify
+from flask import render_template
 
 # Imports - service_account handles authentication, uses my private key to create credentials to identify app to google's APIs; build() constructs an object that knows how to talk to a specific Google service, in this case, sheets.
 from google.oauth2 import service_account
@@ -38,6 +39,15 @@ service = build("sheets", "v4", credentials=creds)
 SPREADSHEET_ID = "1ajiYnuzqZKDZjGe3CmZTpgb4dkwWrlAKRQslP2Piidc"
 RANGE_NAME = "AirAssets!A:Z"  
 
+
+@app.route("/")
+def home():
+    image_folder = os.path.join(app.static_folder, "images")
+    images = [f"images/{img}" for img in os.listdir(image_folder)
+              if img.lower().endswith((".jpg", ".jpeg", ".png"))]
+    return render_template("base.html", image_files=images)
+
+'''
 @app.route("/")
 def home():
     try:
@@ -48,6 +58,7 @@ def home():
         return jsonify(values)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+'''
 
 if __name__ == "__main__":
     app.run(debug=True)
