@@ -1,0 +1,7 @@
+IMAGE CREDITS & LICENSES
+
+f-35a.jpg
+https://commons.wikimedia.org/wiki/File:F35_Lightning_during_the_Oregon_International_Airshow.jpg
+
+f-35b.jpg
+https://commons.wikimedia.org/wiki/File:A_U.S._Air_Force_pilot_navigates_an_F-35A_Lightning_II_aircraft_assigned_to_the_58th_Fighter_Squadron,_33rd_Fighter_Wing_into_position_to_refuel_with_a_KC-135_Stratotanker_assigned_to_the_336th_Air_Refueling_130516-F-XL333-496.jpg
