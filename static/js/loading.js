@@ -1,13 +1,18 @@
+// BASIC STRUCTURE DEVELOPED WITH CHATGPT ASSISTANCE
+// ACTUAL CONSTRUCTION BY ME
 
-```
-BASIC STRUCTURE DEVLOPED WITH CHAT GPT ASSISTANCE
-ACTUAL CONSTRUCTION BY ME
-```
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("Script started");
+
   const counter = document.getElementById("loading-counter");
   const tip = document.getElementById("loading-tip");
   const main = document.getElementById("main-content");
   const loader = document.getElementById("loading-screen");
+
+  if (!counter || !tip || !main || !loader) {
+    console.error("Missing DOM element");
+    return;
+  }
 
   const tips = [
     "Allocating industrial contracts...",
@@ -22,24 +27,23 @@ document.addEventListener("DOMContentLoaded", () => {
   let progress = 0;
 
   function randomIncrement() {
-    // vary increments: slower as it nears 100
-    if (progress < 60) return Math.random() * 10 + 5;     // 5–15 early
-    if (progress < 90) return Math.random() * 5 + 1;      // 1–6 mid
-    return Math.random() * 2 + 0.5;                       // 0.5–2 late
+    if (progress < 60) return Math.random() * 10 + 5;
+    if (progress < 90) return Math.random() * 5 + 1;
+    return Math.random() * 2 + 0.5;
   }
 
   function randomDelay() {
-    // random delay between 5–15 seconds total over all increments
-    return Math.random() * 400 + 100; // 100–500 ms between ticks
+    return Math.random() * 400 + 100; // 100–500 ms per tick
   }
 
   function updateProgress() {
     progress += randomIncrement();
-    if (progress >= 100) {
-      progress = 100;
-      counter.textContent = progress.toFixed(0) + "%";
+    if (progress > 100) progress = 100;
 
-      // fake final pause before reveal
+    counter.textContent = progress.toFixed(0) + "%";
+    console.log("Progress:", progress);
+
+    if (progress >= 100) {
       setTimeout(() => {
         loader.style.transition = "opacity 1s ease";
         loader.style.opacity = 0;
@@ -49,15 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
           document.body.style.overflow = "auto";
         }, 1000);
       }, 1000);
-      return;
+    } else {
+      setTimeout(updateProgress, randomDelay());
     }
-
-    counter.textContent = progress.toFixed(0) + "%";
-    setTimeout(updateProgress, randomDelay());
   }
 
-  // start the illusion
   setTimeout(updateProgress, 1000);
 });
-
-

@@ -27,7 +27,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 # os.environ["GOOGLE_CREDENTIALS"] retrieves the JSON string from my .env. 
 # json.loads() turns that string into a dict
 creds_info = json.loads(os.environ["GOOGLE_CREDENTIALS"])
-# Constructs a credential object from dict, knows how to sign requests w/ my private key, attack OAuth tokens, and renew as needed.
+# Constructs a credential object from dict, knows how to sign requests w/ my private key, attach OAuth tokens, and renew as needed.
 creds = service_account.Credentials.from_service_account_info(creds_info, scopes=SCOPES)
 # I'm essentially saying: “Hi Google, I’m this service account, and I’m allowed to access Sheets.”
 
@@ -47,7 +47,7 @@ def home():
               if img.lower().endswith((".jpg", ".jpeg", ".png"))]
     return render_template("base.html", image_files=images)
 
-'''
+'''BASIC HOME TESTING
 @app.route("/")
 def home():
     try:
