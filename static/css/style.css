@@ -6,26 +6,102 @@ body {
   overflow: hidden; 
 }
 
+#top-banner {
+  position: absolute;
+  top: 2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 50vh;
+  z-index: 10;
+  pointer-events: none;
+}
+
+
+#volume-down {
+  position: absolute;
+  bottom: 8vh;
+  left: 2vw;
+  width: 40px;
+  height: 40px;
+  z-index: 51;
+  cursor: pointer;
+}
+
+#volume-indicator {
+  position: absolute;
+  bottom: 8vh;
+  left: 5vw;
+  width: 80px;
+  height: 40px;
+  z-index: 50;
+}
+
+#volume-up {
+  position: absolute;
+  bottom: 8vh;
+  left: 10vw;
+  width: 40px;
+  height: 40px;
+  z-index: 51;
+  cursor: pointer;
+}
+
+#settings-icon {
+  position: absolute;
+  bottom: 2vh;
+  left: 2vw;
+  width: 180px;
+  height: 60px;
+  z-index: 60; /* above background and loader */
+  cursor: pointer;
+}
+
 #loading-screen {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   width: 100%;
   height: 100vh;
-  background-repeat: no-repeat;
-  background-size: cover;      
-  background-position: center;
-  transition: background-image 1s ease-in-out, opacity 1s ease-in-out;
-  color: #ffd700;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  color: #ffd700;
+  overflow: hidden;
 }
 
-#loading-screen.fade {
+#loading-bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+  transition: opacity 1s ease-in-out;
+}
+
+#loading-bg.fade {
   opacity: 0;
 }
+
+#mute-toggle {
+  position: absolute;
+  bottom: 2vh;
+  right: 2vw;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+#mute-toggle:hover {
+  opacity: 1;
+}
+
 
 .loader {
   text-align: center;

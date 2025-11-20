@@ -1,64 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>War Command Interface</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
+    <title>War Command Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <!-- LOADING SCREEN -->
-  <div id="loading-screen">
-    <div class="loader">
-      <div id="loading-counter">0%</div>
-      <p id="loading-tip">Initializing strategic systems...</p>
-    </div>
-  </div>
 
-  <!-- MAIN PAGE CONTENT -->
-  <div id="main-content" style="display:none;">
+<img id="top-banner" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+    <div id="loading-bg"></div>
+    <div class="loader">
+    <div id="loading-counter">0%</div>
+    <p id="loading-tip">Initializing strategic systems...</p>
+    </div>
+</div>
+
+<!-- MAIN PAGE CONTENT -->
+<div id="main-content" style="display:none;">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
     <h1>Welcome to the War Command Network</h1>
     <p>Page successfully loaded. Placeholder for player input later.</p>
-  </div>
+</div>
 
-  <!-- Background rotation script -->
+<!-- Pass image list to JS -->
 <script>
-  const backgrounds = [
+    window.backgrounds = [
     {% for img in image_files %}
-      "{{ url_for('static', filename=img) }}",
+        "{{ url_for('static', filename=img) }}"{% if not loop.last %},{% endif %}
     {% endfor %}
-  ];
+    ];
+</script>
 
-  const screen = document.getElementById("loading-screen");
-  let i = 0;
+<audio id="bg-music" src="{{ url_for('static', filename='audio/theme.mp3') }}" loop></audio>
 
-  // preload all images first
-  const cache = [];
-  backgrounds.forEach(src => {
-    const img = new Image();
-    img.src = src;
-    cache.push(img);
-  });
+<img id="mute-toggle" 
+    src="{{ url_for('static', filename='icons/mute.svg') }}" 
+    alt="Toggle Sound" />
 
-  // switch after each image finishes loading
-  function changeBackground() {
-    screen.classList.add("fade");
-    const nextImg = new Image();
-    nextImg.src = backgrounds[i];
-    nextImg.onload = () => {
-      setTimeout(() => {
-        screen.style.backgroundImage = `url(${nextImg.src})`;
-        screen.classList.remove("fade");
-        i = (i + 1) % backgrounds.length;
-      }, 1000);
-    };
-  }
+<div id="volume-controls" style="display:none;">
+    <img id="volume-down" src="{{ url_for('static', filename='icons/volume_down.png') }}" alt="Volume Down" />
+    <img id="volume-indicator" src="{{ url_for('static', filename='icons/volume_50.png') }}" alt="Volume Level" />
+    <img id="volume-up" src="{{ url_for('static', filename='icons/volume_up.png') }}" alt="Volume Up" />
+</div>
+<img id="settings-icon" src="{{ url_for('static', filename='icons/settings.png') }}" alt="Audio Settings">
 
-  // set first background immediately, then start cycling
-  screen.style.backgroundImage = `url(${backgrounds[0]})`;
-  setInterval(changeBackground, 4000);
+
+<script>
+  window.volume0 = "{{ url_for('static', filename='icons/volume_0.png') }}";
+  window.volume25 = "{{ url_for('static', filename='icons/volume_25.png') }}";
+  window.volume50 = "{{ url_for('static', filename='icons/volume_50.png') }}";
+  window.volume75 = "{{ url_for('static', filename='icons/volume_75.png') }}";
+  window.volume100 = "{{ url_for('static', filename='icons/volume_100.png') }}";
+  window.iconMute = "{{ url_for('static', filename='icons/mute.svg') }}";
+  window.iconUnmute = "{{ url_for('static', filename='icons/unmute.svg') }}";
 </script>
 
 
-  <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+<!-- Load single script once -->
+<script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+
 </body>
 </html>
