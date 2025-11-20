@@ -55,10 +55,20 @@
 </script>
 
 <audio id="bg-music" src="{{ url_for('static', filename='audio/theme.mp3') }}" loop></audio>
+<audio id="load-complete" src="{{ url_for('static', filename='audio/load_complete.mp3') }}"></audio>
+<audio id="settings-sound" src="{{ url_for('static', filename='audio/settings_click.mp3') }}"></audio>
 
 <img id="mute-toggle" 
     src="{{ url_for('static', filename='icons/mute.svg') }}" 
     alt="Toggle Sound" />
+
+<select id="music-selector" style="display:none;">
+  <option value="{{ url_for('static', filename='audio/theme.mp3') }}">Main Theme</option>
+  <option value="{{ url_for('static', filename='audio/tactical.mp3') }}">Tactical Ops</option>
+  <option value="{{ url_for('static', filename='audio/ambient.mp3') }}">Ambient Radio</option>
+  <option value="{{ url_for('static', filename='audio/jo_em.mp3') }}">Wednesday Radio</option>
+</select>
+
 
 <div id="volume-controls" style="display:none;">
     <img id="volume-down" src="{{ url_for('static', filename='icons/volume_down.png') }}" alt="Volume Down" />

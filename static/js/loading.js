@@ -69,6 +69,13 @@ function updateProgress() {
 
     if (progress >= 100) {
     setTimeout(() => {
+
+        const completeSound = document.getElementById("load-complete");
+            if (completeSound) {
+            completeSound.volume = volumeLevel || 0.5;
+            completeSound.play();
+            }
+
         loader.style.transition = "opacity 1s ease";
         loader.style.opacity = 0;
         setTimeout(() => {
@@ -88,12 +95,35 @@ const muteBtn = document.getElementById("mute-toggle");
 let isMuted = true;
 
 const settingsIcon = document.getElementById("settings-icon");
+const settingsSound = document.getElementById("settings-sound");
+
 if (settingsIcon) {
   settingsIcon.addEventListener("click", () => {
     const controls = document.getElementById("volume-controls");
-    controls.style.display = controls.style.display === "none" ? "flex" : "none";
+    const selector = document.getElementById("music-selector");
+
+    if (settingsSound) {
+      settingsSound.currentTime = 0;
+      settingsSound.volume = (volumeLevel || 0.5) * 0.1;
+      settingsSound.play();
+    }
+
+    const show = controls.style.display === "none";
+    controls.style.display = show ? "flex" : "none";
+    selector.style.display = show ? "block" : "none";
   });
 }
+
+const selector = document.getElementById("music-selector");
+if (selector) {
+  selector.addEventListener("change", (e) => {
+    bgMusic.pause();
+    bgMusic.src = e.target.value;
+    bgMusic.currentTime = 0;
+    if (!isMuted) bgMusic.play();
+  });
+}
+
 
 
 function updateIcon() {
@@ -126,8 +156,16 @@ function setGlobalVolume(level) {
 function updateVolumeImage() {
   const index = Math.round(volumeLevel * 4);
   volumeIndicator.src = volumeImages[index];
-  setGlobalVolume(volumeLevel); // applies to all sounds
+  bgMusic.volume = volumeLevel;
+
+  if (volumeLevel === 0) {
+    isMuted = true;
+  } else {
+    isMuted = false;
+  }
+  updateIcon();
 }
+
 
 
 volumeUp.addEventListener("click", () => {
