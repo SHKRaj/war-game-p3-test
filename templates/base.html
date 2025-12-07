@@ -7,7 +7,9 @@
 </head>
 <body>
 
-<img id="top-banner" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
+<img class="loading-logo" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
+<img class="ui-logo" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
+
 
 <!-- LOADING SCREEN -->
 <div id="loading-screen">
@@ -19,31 +21,11 @@
 </div>
 
 <!-- MAIN PAGE CONTENT -->
-<div id="main-content" style="display:none;">
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <h1>Welcome to the War Command Network</h1>
-    <p>Page successfully loaded. Placeholder for player input later.</p>
+<div id="main-content" class="centered">
+  <h1>Welcome to the War Command Network</h1>
+  <p>Page successfully loaded. Placeholder for player input later.</p>
 </div>
+
 
 <!-- Pass image list to JS -->
 <script>
@@ -70,11 +52,6 @@
 </select>
 
 
-<div id="volume-controls" style="display:none;">
-    <img id="volume-down" src="{{ url_for('static', filename='icons/volume_down.png') }}" alt="Volume Down" />
-    <img id="volume-indicator" src="{{ url_for('static', filename='icons/volume_50.png') }}" alt="Volume Level" />
-    <img id="volume-up" src="{{ url_for('static', filename='icons/volume_up.png') }}" alt="Volume Up" />
-</div>
 <img id="settings-icon" src="{{ url_for('static', filename='icons/settings.png') }}" alt="Audio Settings">
 
 

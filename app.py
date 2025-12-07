@@ -44,8 +44,61 @@ RANGE_NAME = "AirAssets!A:Z"
 def home():
     image_folder = os.path.join(app.static_folder, "images")
     images = [f"images/{img}" for img in os.listdir(image_folder)
-              if img.lower().endswith((".jpg", ".jpeg", ".png"))]
+            if img.lower().endswith((".jpg", ".jpeg", ".png"))]
     return render_template("base.html", image_files=images)
+
+@app.route("/load_player/<playercode>")
+def load_player(playercode):
+    try:
+        sheet = service.spreadsheets()
+        range_name = f"{playercode}!A:JQ"
+        result = sheet.values().get(
+            spreadsheetId=SPREADSHEET_ID,
+            range=range_name
+        ).execute()
+
+        values = result.get("values", [])
+
+        if not values:
+            return jsonify({"error": f"No data found for playercode: {playercode}"}), 404
+
+        # Optionally parse headers for clarity
+        headers = values[0]
+        rows = values[1:]
+        structured = [dict(zip(headers, row)) for row in rows]
+
+        return jsonify({"playercode": playercode, "data": structured})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+from flask import request
+
+@app.route("/update_contracts/<playercode>", methods=["POST"])
+def update_contracts(playercode):
+    try:
+        data = request.get_json()
+
+        # Expected: [{"Line Item": "Fighter Jets", "Contracts": 10}, ...]
+        updates = []
+        for i, row in enumerate(data, start=2):  # assuming row 1 = headers
+            updates.append([row["Contracts"]])
+
+        range_name = f"{playercode}!B2:B{len(updates)+1}"  # Column B = Contracts
+        body = {"values": updates}
+
+        service.spreadsheets().values().update(
+            spreadsheetId=SPREADSHEET_ID,
+            range=range_name,
+            valueInputOption="USER_ENTERED",
+            body=body
+        ).execute()
+
+        return jsonify({"status": "success", "updated_rows": len(updates)})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 '''BASIC HOME TESTING
 @app.route("/")
