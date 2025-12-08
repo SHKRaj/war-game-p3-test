@@ -1,0 +1,175 @@
+/* === INTRO PAGE STYLING === */
+body {
+  margin: 0;
+  background-color: #000;
+  color: #00ffcc;
+  font-family: 'Consolas', 'Courier New', monospace;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* === LOADING SCREEN === */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  z-index: 100;
+}
+
+/* Background image fade */
+#loading-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.35);
+}
+
+/* === LOGO === */
+.loading-logo {
+  width: 680px;
+  max-width: 95%;
+  position: fixed;
+  top: 10%;                  /* move higher */
+  left: 50%;
+  transform: translateX(-50%);
+  image-rendering: crisp-edges;
+  z-index: 300;
+  opacity: 1;
+}
+
+/* === LOADER TEXT === */
+.loader {
+  z-index: 2;
+  color: #00ffcc;
+  font-size: 1.3rem;
+  text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc55;
+  margin-top: 280px; /* positions below logo */
+}
+
+#loading-counter {
+  font-size: 2.4rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+/* === ICONS === */
+#settings-icon,
+#mute-toggle {
+  position: fixed;
+  bottom: 4vh;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: transform 0.2s ease, opacity 0.2s;
+  z-index: 200;
+}
+
+/* Settings icon — wide and readable */
+#settings-icon {
+  right: 3vw;
+  width: 200px;
+  height: 90px;
+  object-fit: contain;
+}
+
+#mute-toggle {
+  left: 3vw;
+  width: 90px;
+  height: 90px;
+}
+
+#settings-icon:hover,
+#mute-toggle:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+/* === MUSIC SELECTOR === */
+#music-selector {
+  position: fixed;
+  bottom: 16vh;
+  right: 3vw;
+  background-color: #000;
+  border: 1px solid #00ffcc;
+  color: #00ffcc;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 15px #00ffcc33;
+  display: none;
+  z-index: 180;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .loading-logo {
+    width: 360px;
+    top: 18%;
+  }
+
+  #settings-icon {
+    width: 150px;
+    height: 70px;
+  }
+
+  #mute-toggle {
+    width: 70px;
+    height: 70px;
+  }
+
+  #music-selector {
+    bottom: 12vh;
+  }
+}
+
+/* === PLAY BUTTON === */
+#play-button {
+  background: #00ffcc;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Consolas', monospace;
+  font-size: 1.3rem;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  padding: 1rem 2.5rem;
+  margin-top: 2rem;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+  transition: all 0.3s ease;
+}
+
+#play-button:hover {
+  background: #00a3a3;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
+  transform: translateY(-2px);
+}
+
+/* === MAIN CONTENT (post-loading text + button) === */
+#main-content {
+  display: none;
+  position: fixed;
+  bottom: 32%;               /* lower down on screen */
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #00ffcc;
+  z-index: 250;
+}
+
+#main-content h1 {
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+}
+
+#main-content p {
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  opacity: 0.9;
+}

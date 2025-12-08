@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>War Command Interface</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/intro.css') }}">
 </head>
 <body>
 
 <img class="loading-logo" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
-<img class="ui-logo" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
-
 
 <!-- LOADING SCREEN -->
 <div id="loading-screen">
@@ -23,8 +21,11 @@
 <!-- MAIN PAGE CONTENT -->
 <div id="main-content" class="centered">
   <h1>Welcome to the War Command Network</h1>
-  <p>Page successfully loaded. Placeholder for player input later.</p>
+  <p>Systems operational. Awaiting operator input.</p>
+
+  <button id="play-button">ENTER COMMAND</button>
 </div>
+
 
 
 <!-- Pass image list to JS -->

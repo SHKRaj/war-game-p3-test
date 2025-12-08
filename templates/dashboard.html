@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>War Command Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body data-playercode="{{ playercode }}">
+
+<h1>Strategic Command Interface</h1>
+
+<div id="dashboard-content">
+  <!-- 🧠 Intelligence Overview FIRST -->
+  <section id="intel-output"></section>
+
+  <!-- 💼 Contracts -->
+  <section class="control-section">
+    <h2>Contracts</h2>
+    <div id="contracts-section" class="control-grid"></div>
+    <button id="save-contracts">Save Contracts</button>
+  </section>
+
+  <!-- 🏛️ Policies -->
+  <section class="control-section">
+    <h2>Policies</h2>
+    <div id="policies-section" class="control-grid"></div>
+    <button id="save-policies">Save Policies</button>
+  </section>
+</div>
+
+<!-- Alerts Modal -->
+<div id="alerts-modal" class="modal">
+  <div class="modal-content">
+    <span id="close-alerts" class="close-btn">&times;</span>
+    <h2>Strategic Alerts</h2>
+    <div id="alerts-body"></div>
+  </div>
+</div>
+
+<button id="open-alerts" class="floating-btn">💡 Alerts</button>
+
+
+<br>
+
+  <script src="{{ url_for('static', filename='js/playercode.js') }}"></script>
+</body>
+</html>
