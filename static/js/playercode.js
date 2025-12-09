@@ -198,10 +198,10 @@ window.initDashboard = async function () {
       window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 
       openBtn.classList.remove("alert-low", "alert-medium", "alert-high");
-      if (count < 10) {
+      if (count < 20) {
         openBtn.classList.add("alert-low");
         openBtn.textContent = `💡 Alerts (${count})`;
-      } else if (count < 20) {
+      } else if (count < 30) {
         openBtn.classList.add("alert-medium");
         openBtn.textContent = `⚠️ Alerts (${count})`;
       } else {

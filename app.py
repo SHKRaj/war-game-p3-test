@@ -149,7 +149,7 @@ def api_data_sections(playercode):
             "Capital": "JQ2",
             "Debt & Budgets": "JQ3",
             "Departments": "JQ4",
-            "Cyberattacks": "JQ5",
+            "Major Cyberattacks": "JQ5",
             "Civs": "JQ6",
             "Alerts": "JQ7",
             "Airforce": "JQ8",
