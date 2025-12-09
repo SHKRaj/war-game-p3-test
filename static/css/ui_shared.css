@@ -1,0 +1,62 @@
+/* === SHARED UI ELEMENTS === */
+#mute-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  z-index: 120;
+  filter: drop-shadow(0 0 6px #00ffff);
+  transition: transform 0.2s ease, filter 0.3s ease;
+}
+#mute-toggle:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 12px #00ffff);
+}
+
+/* === ICONS === */
+#settings-icon {
+  position: fixed;
+  bottom: 4vh;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: transform 0.2s ease, opacity 0.2s;
+  z-index: 200;
+}
+
+#settings-icon {
+  right: 3vw;
+  width: 200px;
+  height: 90px;
+  object-fit: contain;
+}
+
+#mute-toggle {
+  left: 3vw;
+  width: 90px;
+  height: 90px;
+}
+
+#settings-icon:hover,
+#mute-toggle:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+/* === MUSIC SELECTOR === */
+#music-selector {
+  position: fixed;
+  bottom: 16vh;
+  right: 3vw;
+  background-color: #000;
+  border: 1px solid #00ffcc;
+  color: #00ffcc;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 15px #00ffcc33;
+  display: none;
+  z-index: 180;
+}
+

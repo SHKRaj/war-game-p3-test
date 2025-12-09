@@ -1,74 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>War Command Interface</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}War Command{% endblock %}</title>
+
+  <!-- 🔹 Shared UI elements (volume, settings, overlays) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ui_shared.css') }}">
+
+  <!-- 🔹 Intro only — disabled on dashboard -->
+  {% if 'dashboard' not in request.path %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/intro.css') }}">
+  {% endif %}
+
+  <!-- 🔹 Page-specific CSS -->
+  {% block head %}{% endblock %}
 </head>
-<body>
-
-<img class="loading-logo" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
-
-<!-- LOADING SCREEN -->
-<div id="loading-screen">
-    <div id="loading-bg"></div>
-    <div class="loader">
-    <div id="loading-counter">0%</div>
-    <p id="loading-tip">Initializing strategic systems...</p>
-    </div>
-</div>
-
-<!-- MAIN PAGE CONTENT -->
-<div id="main-content" class="centered">
-  <h1>Welcome to the War Command Network</h1>
-  <p>Systems operational. Awaiting operator input.</p>
-
-  <button id="play-button">ENTER COMMAND</button>
-</div>
 
 
+  <!-- GLOBAL AUDIO & ICONS (shared across all pages) -->
+  {% include '_audio_ui.html' %}
+  <audio id="load-complete" src="{{ url_for('static', filename='audio/load_complete.mp3') }}"></audio>
+  <audio id="settings-click" src="{{ url_for('static', filename='audio/settings_click.mp3') }}" preload="auto"></audio>
 
-<!-- Pass image list to JS -->
-<script>
-    window.backgrounds = [
-    {% for img in image_files %}
-        "{{ url_for('static', filename=img) }}"{% if not loop.last %},{% endif %}
-    {% endfor %}
-    ];
-</script>
+  <!-- PAGE-SPECIFIC CONTENT -->
+  {% block content %}{% endblock %}
 
-<audio id="bg-music" src="{{ url_for('static', filename='audio/theme.mp3') }}" loop></audio>
-<audio id="load-complete" src="{{ url_for('static', filename='audio/load_complete.mp3') }}"></audio>
-<audio id="settings-sound" src="{{ url_for('static', filename='audio/settings_click.mp3') }}"></audio>
+  <!-- ICON PATHS for JS -->
+  <script>
+    window.iconMute = "{{ url_for('static', filename='icons/mute.svg') }}";
+    window.iconUnmute = "{{ url_for('static', filename='icons/unmute.svg') }}";
+  </script>
 
-<img id="mute-toggle" 
-    src="{{ url_for('static', filename='icons/mute.svg') }}" 
-    alt="Toggle Sound" />
+  <!-- GLOBAL AUDIO CONTROLLER -->
+  <script src="{{ url_for('static', filename='js/audioController.js') }}"></script>
 
-<select id="music-selector" style="display:none;">
-  <option value="{{ url_for('static', filename='audio/theme.mp3') }}">Main Theme</option>
-  <option value="{{ url_for('static', filename='audio/tactical.mp3') }}">Tactical Ops</option>
-  <option value="{{ url_for('static', filename='audio/ambient.mp3') }}">Ambient Radio</option>
-  <option value="{{ url_for('static', filename='audio/jo_em.mp3') }}">Wednesday Radio</option>
-</select>
-
-
-<img id="settings-icon" src="{{ url_for('static', filename='icons/settings.png') }}" alt="Audio Settings">
-
-
-<script>
-  window.volume0 = "{{ url_for('static', filename='icons/volume_0.png') }}";
-  window.volume25 = "{{ url_for('static', filename='icons/volume_25.png') }}";
-  window.volume50 = "{{ url_for('static', filename='icons/volume_50.png') }}";
-  window.volume75 = "{{ url_for('static', filename='icons/volume_75.png') }}";
-  window.volume100 = "{{ url_for('static', filename='icons/volume_100.png') }}";
-  window.iconMute = "{{ url_for('static', filename='icons/mute.svg') }}";
-  window.iconUnmute = "{{ url_for('static', filename='icons/unmute.svg') }}";
-</script>
-
-
-<!-- Load single script once -->
-<script src="{{ url_for('static', filename='js/loading.js') }}"></script>
-
+  <!-- PAGE-SPECIFIC JS -->
+  {% block scripts %}{% endblock %}
 </body>
 </html>

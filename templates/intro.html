@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}War Command Interface{% endblock %}
+
+{% block content %}
+  <!-- LIMITLESS / WAR COMMAND LOGO -->
+  <img class="loading-logo" src="{{ url_for('static', filename='titles/title_logo.gif') }}" alt="War Command" />
+
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen">
+    <div id="loading-bg"></div>
+    <div class="loader">
+      <div id="loading-counter">0%</div>
+      <p id="loading-tip">Initializing strategic systems...</p>
+    </div>
+  </div>
+
+  <!-- MAIN PAGE CONTENT -->
+  <div id="main-content" class="centered">
+    <h1>Welcome to the War Command Network</h1>
+    <p>Systems operational. Awaiting operator input.</p>
+    <button id="play-button">ENTER COMMAND</button>
+  </div>
+
+  <!-- Background images passed from Flask -->
+  <script>
+    window.backgrounds = [
+      {% for img in image_files %}
+        "{{ url_for('static', filename=img) }}"{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ];
+  </script>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+{% endblock %}

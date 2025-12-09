@@ -173,3 +173,83 @@ body {
   font-size: 1rem;
   opacity: 0.9;
 }
+
+/* === ENTER CODE PAGE === */
+#code-entry {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #001a1a 0%, #000 80%);
+  color: #00ffcc;
+  text-align: center;
+}
+
+#code-entry h1 {
+  font-size: 2rem;
+  text-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffaa55;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+#code-entry p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+#code-entry .highlight {
+  color: #00ffaa;
+  text-shadow: 0 0 10px #00ffaa;
+  font-weight: bold;
+}
+
+#code-form input[type="text"] {
+  width: 320px;
+  padding: 12px;
+  font-family: 'Consolas', monospace;
+  font-size: 1.1rem;
+  color: #00ffcc;
+  background: #000;
+  border: 1px solid #00ffcc;
+  border-radius: 6px;
+  box-shadow: 0 0 10px #00ffcc33;
+  text-align: center;
+  outline: none;
+  transition: box-shadow 0.3s ease, transform 0.1s ease;
+}
+
+#code-form input[type="text"]:focus {
+  box-shadow: 0 0 20px #00ffaa99;
+  transform: scale(1.03);
+}
+
+#code-form button {
+  margin-top: 1.5rem;
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  font-family: 'Consolas', monospace;
+  color: #000;
+  background: #00ffcc;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+#code-form button:hover {
+  background: #00a3a3;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
+  transform: translateY(-2px);
+}
+
+#code-hint {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #00ffccaa;
+  letter-spacing: 0.5px;
+}

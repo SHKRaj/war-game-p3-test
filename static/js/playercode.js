@@ -1,5 +1,11 @@
-document.addEventListener("DOMContentLoaded", async () => {
+window.initDashboard = async function () {
   const playercode = document.body.dataset.playercode || "TEST";
+  console.log("Dashboard initializing for", playercode);
+  console.log({
+    intel: document.getElementById("intel-output"),
+    contracts: document.getElementById("contracts-section"),
+    policies: document.getElementById("policies-section"),
+  });
 
   // === LOAD CONTRACT DATA ===
   async function loadContracts() {
@@ -225,7 +231,40 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (val === null) {
         card.innerHTML += `<p><i>No data available</i></p>`;
-      } else if (typeof val === "object" && val.items) {
+      } 
+      else if (typeof val === "object" && Array.isArray(val.sections)) {
+        val.sections.forEach(section => {
+          const container = document.createElement("div");
+          container.classList.add("intel-subsection");
+
+          const header = document.createElement("div");
+          header.classList.add("intel-subheader");
+          header.innerHTML = `<span class="caret">▶</span> <b>${section.header}</b>`;
+          container.appendChild(header);
+
+          const list = document.createElement("ul");
+          list.classList.add("intel-list");
+          section.items.forEach(item => {
+            const li = document.createElement("li");
+            li.innerHTML = item.replace(/\[(.*?)\]/g, `<span class="tag">[$1]</span>`);
+            list.appendChild(li);
+          });
+          container.appendChild(list);
+
+          if (section.items.length > 0) {
+            header.addEventListener("click", () => {
+              list.classList.toggle("collapsed");
+              header.querySelector(".caret").textContent =
+                list.classList.contains("collapsed") ? "▼" : "▶";
+            });
+          } else {
+            header.querySelector(".caret").style.visibility = "hidden";
+          }
+
+          card.appendChild(container);
+        });
+      }
+      else if (typeof val === "object" && val.items) {
         if (val.title) card.innerHTML += `<p><b>${val.title}</b></p>`;
         const list = document.createElement("ul");
         val.items.forEach(item => {
@@ -234,10 +273,41 @@ document.addEventListener("DOMContentLoaded", async () => {
           list.appendChild(li);
         });
         card.appendChild(list);
-      } else if (typeof val === "object") {
+      } 
+      else if (typeof val === "object" && val.stats) {
+        // NEW: handle stats objects cleanly
+        const list = document.createElement("ul");
+        for (const [k, v] of Object.entries(val.stats)) {
+          const li = document.createElement("li");
+          li.innerHTML = `<b>${k}:</b> ${v}`;
+          list.appendChild(li);
+        }
+        card.appendChild(list);
+      }
+      else if (typeof val === "object" && val.wars) {
+        val.wars.forEach(war => {
+            const block = document.createElement("div");
+            block.classList.add("intel-subsection");
+            block.innerHTML = `<h4>${war.Name || "Unnamed Conflict"}</h4>
+            <p>${war.Desc || ""}</p>`;
+            if (war.Sides) {
+            const ul = document.createElement("ul");
+            war.Sides.forEach(side => {
+                const li = document.createElement("li");
+                li.innerHTML = `<b>${side.Name}</b> — ${side.Nations} 
+                (Pts: ${side.Pts || "?"}, Backers: ${side.Backers || "Unknown"})`;
+                ul.appendChild(li);
+            });
+            block.appendChild(ul);
+            }
+            card.appendChild(block);
+        });
+        }
+      else if (typeof val === "object") {
         const [subk, subv] = Object.entries(val)[0];
         card.innerHTML += `<p><b>${subk}:</b> ${subv}</p>`;
-      } else {
+      } 
+      else {
         card.innerHTML += `<p>${val}</p>`;
       }
 
@@ -256,4 +326,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadIntelData();
   await loadContracts();
   await loadPolicies();
-});
+};

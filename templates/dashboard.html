@@ -1,12 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>War Command Dashboard</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body data-playercode="{{ playercode }}">
+{% extends "base.html" %}
 
+{% block title %}War Command Dashboard{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+
+{% block content %}
 <h1>Strategic Command Interface</h1>
 
 <div id="dashboard-content">
@@ -38,10 +40,17 @@
 </div>
 
 <button id="open-alerts" class="floating-btn">💡 Alerts</button>
+{% endblock %}
 
-
-<br>
-
-  <script src="{{ url_for('static', filename='js/playercode.js') }}"></script>
-</body>
-</html>
+{% block scripts %}
+<script>
+  document.body.classList.add("dashboard");
+  document.body.dataset.playercode = "{{ playercode }}";
+  const script = document.createElement("script");
+  script.src = "{{ url_for('static', filename='js/playercode.js') }}?v=" + Date.now();
+  script.onload = () => {
+    if (window.initDashboard) window.initDashboard();
+  };
+  document.body.appendChild(script);
+</script>
+{% endblock %}

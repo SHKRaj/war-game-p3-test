@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>War Command Code Interface</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/intro.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<form action="/enter_code" method="POST" class="centered">
-  <label>Enter Player Code:</label>
-  <input type="text" name="playercode" required>
-  <button type="submit">Access Command</button>
-</form>
+{% block title %}Enter Command Code | War Command Interface{% endblock %}
+
+{% block content %}
+<div id="code-entry" class="centered">
+  <h1>ACCESS AUTHORIZATION REQUIRED</h1>
+  <p>Enter your assigned <span class="highlight">PLAYER CODE</span> to proceed.</p>
+
+  <form action="/enter_code" method="POST" id="code-form">
+    <input type="text" name="playercode" maxlength="32" placeholder="Enter Code..." required autocomplete="off">
+    <button type="submit">ACCESS COMMAND</button>
+  </form>
+
+  <div id="code-hint">⚠ Unauthorized access is monitored.</div>
+</div>
+{% endblock %}

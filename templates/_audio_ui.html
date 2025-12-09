@@ -1,0 +1,14 @@
+<div id="audio-ui">
+  <img id="mute-toggle" src="{{ url_for('static', filename='icons/unmute.svg') }}" alt="Toggle Sound" />
+  <img id="settings-icon" src="{{ url_for('static', filename='icons/settings.png') }}" alt="Audio Settings" />
+  <select id="music-selector" style="display:none;">
+    <option value="{{ url_for('static', filename='audio/theme.mp3') }}">Main Theme</option>
+    <option value="{{ url_for('static', filename='audio/tactical.mp3') }}">Tactical Ops</option>
+    <option value="{{ url_for('static', filename='audio/ambient.mp3') }}">Ambient Radio</option>
+    <option value="{{ url_for('static', filename='audio/jo_em.mp3') }}">Wednesday Radio</option>
+  </select>
+</div>
+
+<audio id="bg-music" loop>
+  <source src="{{ url_for('static', filename='audio/theme.mp3') }}" type="audio/mpeg">
+</audio>

@@ -36,6 +36,32 @@ h1 {
   background: rgba(255, 255, 255, 0.05);
 }
 
+body.dashboard {
+  background-color: #0a0a0a;
+  color: #eee;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+body.dashboard {
+  display: block !important;
+  justify-content: normal !important;
+  align-items: normal !important;
+  height: auto !important;
+  overflow-y: auto !important;
+  text-align: center !important;
+}
+
+/* override intro.css global centering */
+body {
+  display: block !important;
+  justify-content: normal !important;
+  align-items: normal !important;
+  height: auto !important;
+  overflow-y: auto !important;
+  text-align: center;
+  padding: 40px;
+}
+
 /* === CONTROL SECTIONS === */
 .control-section {
   background: rgba(0, 20, 20, 0.4);
@@ -254,6 +280,20 @@ button:hover {
   white-space: pre-wrap;
 }
 
+.intel-card p b {
+  display: block;
+  margin-top: 1.2rem;
+  font-size: 1.05rem;
+  text-decoration: underline;
+  color: #00ffcc;
+}
+
+.intel-card ul {
+  margin-top: 0.4rem;
+  padding-left: 1rem;
+  line-height: 1.4;
+}
+
 .intel-card li {
   color: #ccc;
   margin-bottom: 0.3rem;
@@ -262,6 +302,46 @@ button:hover {
 .intel-card li::before {
   content: "• ";
   color: #00ffcc;
+}
+
+.intel-subsection {
+  margin-bottom: 1rem;
+  border-left: 2px solid rgba(0, 255, 204, 0.3);
+  padding-left: 0.8rem;
+}
+
+.intel-subheader {
+  color: #00ffcc;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.intel-subheader:hover {
+  color: #00ffaa;
+}
+
+.intel-subheader .caret {
+  display: inline-block;
+  margin-right: 5px;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.intel-list {
+  margin-top: 0.4rem;
+  padding-left: 1rem;
+  list-style: none;
+}
+
+.intel-list.collapsed {
+  display: none;
+}
+
+.intel-list li {
+  margin-bottom: 0.3rem;
+  color: #ccc;
 }
 
 /* === HIGHLIGHT TAGS === */
@@ -346,24 +426,36 @@ button:hover {
 .floating-btn {
   position: fixed;
   bottom: 2vh;
-  right: 2vw;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #00ffcc;
   color: #000;
   border: none;
   border-radius: 8px;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 1.2rem;
   font-family: 'Consolas', monospace;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
-  transition: all 0.3s ease;
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background-color 0.2s ease;
   z-index: 120;
 }
 
+/* hover keeps center while pulsing up slightly */
 .floating-btn:hover {
   background-color: #00a3a3;
   color: #fff;
-  transform: translateY(-2px);
+  transform: translate(-50%, -3px);
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
+}
+
+/* optional subtle breathing effect for attention */
+@keyframes gentlePulse {
+  0%, 100% { box-shadow: 0 0 10px #00ffcc; }
+  50% { box-shadow: 0 0 25px #00ffcc; }
+}
+.floating-btn {
+  animation: gentlePulse 3s infinite ease-in-out;
 }
 
 @keyframes pulse-green {
