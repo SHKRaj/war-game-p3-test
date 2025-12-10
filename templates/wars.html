@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Ongoing Wars | War Command{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/wars.css') }}">
+
+{% endblock %}
+
+{% block content %}
+  <h1>Ongoing Wars</h1>
+  <div id="wars-list" class="wars-grid"></div>
+  <button onclick="window.location.href='/'" class="back-btn">Return to Command</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+fetch("/api/wars")
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("wars-list");
+    if (data.wars && data.wars.length) {
+      data.wars.forEach(war => {
+        const card = document.createElement("div");
+        card.classList.add("war-card");
+        card.innerHTML = `
+          <h2>${war.Name || "Unnamed Conflict"}</h2>
+          <p>${war.Desc || "No description available"}</p>
+          ${
+            war.Sides
+              ? `<ul>${war.Sides.map(
+                  s =>
+                    `<li><b>${s.Name}</b> — ${s.Nations}${
+                      s.Backers ? ` <i>(${s.Backers})</i>` : ""
+                    }</li>`
+                ).join("")}</ul>`
+              : ""
+          }
+        `;
+        container.appendChild(card);
+      });
+    } else {
+      container.innerHTML = "<p>No active conflicts detected.</p>";
+    }
+  })
+  .catch(err => {
+    document.getElementById("wars-list").innerHTML = `<p>Error loading wars: ${err}</p>`;
+  });
+</script>
+{% endblock %}

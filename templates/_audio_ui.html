@@ -1,6 +1,7 @@
 <div id="audio-ui">
   <img id="mute-toggle" src="{{ url_for('static', filename='icons/unmute.svg') }}" alt="Toggle Sound" />
   <img id="settings-icon" src="{{ url_for('static', filename='icons/settings.png') }}" alt="Audio Settings" />
+
   <select id="music-selector" style="display:none;">
     <option value="{{ url_for('static', filename='audio/theme.mp3') }}">Main Theme</option>
     <option value="{{ url_for('static', filename='audio/tactical.mp3') }}">Tactical Ops</option>
@@ -9,6 +10,12 @@
   </select>
 </div>
 
+<!-- 🎵 Background Music -->
 <audio id="bg-music" loop>
   <source src="{{ url_for('static', filename='audio/theme.mp3') }}" type="audio/mpeg">
 </audio>
+
+<!-- 🎧 UI Sound Effects -->
+<audio id="load-complete" src="{{ url_for('static', filename='audio/load_complete.mp3') }}"></audio>
+<audio id="settings-click" src="{{ url_for('static', filename='audio/settings_click.mp3') }}" preload="auto"></audio>
+<audio id="click-sound" src="{{ url_for('static', filename='audio/gen_click.mp3') }}" preload="auto"></audio>

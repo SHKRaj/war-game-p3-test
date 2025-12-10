@@ -20,7 +20,6 @@ body {
   z-index: 100;
 }
 
-/* Background image fade */
 #loading-bg {
   position: absolute;
   inset: 0;
@@ -34,7 +33,7 @@ body {
   width: 680px;
   max-width: 95%;
   position: fixed;
-  top: 10%;                  /* move higher */
+  top: 10%;
   left: 50%;
   transform: translateX(-50%);
   image-rendering: crisp-edges;
@@ -48,7 +47,7 @@ body {
   color: #00ffcc;
   font-size: 1.3rem;
   text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc55;
-  margin-top: 280px; /* positions below logo */
+  margin-top: 280px;
 }
 
 #loading-counter {
@@ -69,7 +68,6 @@ body {
   z-index: 200;
 }
 
-/* Settings icon — wide and readable */
 #settings-icon {
   right: 3vw;
   width: 200px;
@@ -105,57 +103,11 @@ body {
   z-index: 180;
 }
 
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
-  .loading-logo {
-    width: 360px;
-    top: 18%;
-  }
-
-  #settings-icon {
-    width: 150px;
-    height: 70px;
-  }
-
-  #mute-toggle {
-    width: 70px;
-    height: 70px;
-  }
-
-  #music-selector {
-    bottom: 12vh;
-  }
-}
-
-/* === PLAY BUTTON === */
-#play-button {
-  background: #00ffcc;
-  color: #000;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Consolas', monospace;
-  font-size: 1.3rem;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  padding: 1rem 2.5rem;
-  margin-top: 2rem;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-  transition: all 0.3s ease;
-}
-
-#play-button:hover {
-  background: #00a3a3;
-  color: #fff;
-  box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
-  transform: translateY(-2px);
-}
-
-/* === MAIN CONTENT (post-loading text + button) === */
+/* === MAIN CONTENT (POST-LOADING) === */
 #main-content {
   display: none;
   position: fixed;
-  bottom: 32%;               /* lower down on screen */
+  bottom: 32%;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -172,6 +124,91 @@ body {
   margin-bottom: 1.2rem;
   font-size: 1rem;
   opacity: 0.9;
+}
+
+/* === BUTTON BASE STYLE === */
+button {
+  font-family: 'Consolas', monospace;
+  border-radius: 8px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* === PRIMARY (ENTER COMMAND) === */
+#play-button {
+  background: #00ffcc;
+  color: #000;
+  border: none;
+  font-size: 1.3rem;
+  padding: 1rem 2.5rem;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+  margin-top: 2rem;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+#play-button:hover {
+  background: #00a3a3;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
+  transform: translateY(-2px);
+}
+
+/* === SECONDARY BUTTONS (GLOBAL / WARS) === */
+#global-button,
+#war-button {
+  background: rgba(0, 255, 204, 0.15);
+  color: #00ffcc;
+  border: 1.5px solid #00ffcc;
+  font-size: 1rem;
+  padding: 0.7rem 1.8rem;
+  margin: 0.6rem;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+#global-button:hover,
+#war-button:hover {
+  background: #00ffcc;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.7);
+  transform: translateY(-2px);
+}
+
+#global-button:active,
+#war-button:active,
+#play-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+}
+
+/* === BUTTON ALIGNMENT === */
+#main-content button {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  #main-content button {
+    margin: 0 0.6rem;
+  }
+}
+
+/* === ANIMATIONS === */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 204, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(0, 255, 204, 0.8); }
+}
+
+#global-button {
+  animation: pulseGlow 3s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+#war-button {
+  animation: pulseGlow 3s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 /* === ENTER CODE PAGE === */
@@ -252,4 +289,30 @@ body {
   font-size: 0.9rem;
   color: #00ffccaa;
   letter-spacing: 0.5px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .loading-logo {
+    width: 360px;
+    top: 18%;
+  }
+
+  #settings-icon {
+    width: 150px;
+    height: 70px;
+  }
+
+  #mute-toggle {
+    width: 70px;
+    height: 70px;
+  }
+
+  #music-selector {
+    bottom: 12vh;
+  }
+
+  #main-content {
+    bottom: 28%;
+  }
 }

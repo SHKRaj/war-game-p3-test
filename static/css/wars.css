@@ -1,0 +1,60 @@
+body {
+  background-color: #000;
+  color: #00ffcc;
+  font-family: 'Consolas', monospace;
+  text-align: center;
+  padding: 3rem;
+}
+
+.wars-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.war-card {
+  border: 1px solid #00ffcc;
+  border-radius: 10px;
+  background: rgba(0, 20, 20, 0.4);
+  width: 80%;
+  max-width: 800px;
+  padding: 1.5rem;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+  text-align: left;
+}
+
+.war-card h2 {
+  color: #00ffaa;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 0 10px #00ffaa66;
+}
+
+.war-card ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.war-card li {
+  margin: 0.3rem 0;
+  color: #ccfffa;
+}
+
+.back-btn {
+  margin-top: 2rem;
+  background: #00ffcc;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #00a3a3;
+  color: #fff;
+}

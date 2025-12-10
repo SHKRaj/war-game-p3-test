@@ -458,6 +458,75 @@ button:hover {
   animation: gentlePulse 3s infinite ease-in-out;
 }
 
+/* === WARS PAGE === */
+.wars-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  margin-top: 3rem;
+}
+
+.war-card {
+  background: rgba(0, 20, 20, 0.4);
+  border: 1px solid #00ffcc;
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  width: 80%;
+  max-width: 900px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  text-align: left;
+}
+
+.war-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.25);
+}
+
+.war-card h2 {
+  color: #00ffcc;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.war-card ul {
+  margin-top: 0.6rem;
+  list-style: none;
+  padding-left: 1rem;
+  color: #ccc;
+}
+
+.war-card li::before {
+  content: "• ";
+  color: #00ffcc;
+}
+
+.back-btn {
+  background-color: #00ffcc;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Consolas', monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 0.7rem 2rem;
+  margin: 2rem auto;
+  display: block;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #00a3a3;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
+  transform: translateY(-2px);
+}
+
+
 @keyframes pulse-green {
   0% { box-shadow: 0 0 5px #00ff99; }
   50% { box-shadow: 0 0 20px #00ff99, 0 0 30px #00ff99; }

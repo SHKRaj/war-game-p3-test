@@ -101,3 +101,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateIcon();
 });
+
+// --- UNIVERSAL CLICK SOUND ---
+window.addEventListener("load", () => {
+  const clickSound = document.getElementById("click-sound");
+  if (!clickSound) return;
+
+  // set global volume very low
+  clickSound.volume = 0.05;  // 5% of full volume
+
+  document.addEventListener("mousedown", (e) => {
+    if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+  });
+});
+

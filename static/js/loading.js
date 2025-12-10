@@ -97,6 +97,57 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // Navigate to global page
+  const globalBtn = document.getElementById("global-button");
+  if (globalBtn) {
+    globalBtn.addEventListener("click", () => {
+      window.location.href = "/global";
+    });
+}
+
+const warBtn = document.getElementById("war-button");
+const warModal = document.getElementById("war-modal");
+const warBody = document.getElementById("war-body");
+const closeWar = document.getElementById("close-war-modal");
+
+if (warBtn) {
+  warBtn.addEventListener("click", async () => {
+    try {
+      const res = await fetch("/api/war_list");
+      const data = await res.json();
+
+      if (!data.wars || data.wars.length === 0) {
+        warBody.innerHTML = "<p>No active conflicts detected.</p>";
+      } else {
+        warBody.innerHTML = data.wars.map(w => `
+          <div class="war-card">
+            <h3>${w.Name || "Unnamed Conflict"}</h3>
+            <p>${w.Desc || ""}</p>
+            ${w.Sides ? `
+              <ul>${w.Sides.map(side => `
+                <li><b>${side.Name}</b> — ${side.Nations || "?"}</li>
+              `).join("")}</ul>
+            ` : ""}
+          </div>
+        `).join("");
+      }
+
+      warModal.style.display = "flex";
+    } catch (err) {
+      warBody.innerHTML = `<p style="color:#ff4444;">Error loading wars: ${err}</p>`;
+      warModal.style.display = "flex";
+    }
+  });
+}
+
+if (closeWar) closeWar.addEventListener("click", () => {
+  warModal.style.display = "none";
+});
+window.addEventListener("click", (e) => {
+  if (e.target === warModal) warModal.style.display = "none";
+});
+
+
   // Start loading animation
   setTimeout(updateProgress, 1000);
 });

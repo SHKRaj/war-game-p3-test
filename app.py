@@ -286,8 +286,69 @@ def api_data_sections(playercode):
 
 
 
+@app.route("/api/global_data")
+def api_global_data():
+    try:
+        sheet = service.spreadsheets()
+        result = sheet.values().get(
+            spreadsheetId=SPREADSHEET_ID,
+            range="Global!A:Z"
+        ).execute()
+        rows = result.get("values", [])
+        headers = rows[0]
+        data = [
+            dict(zip(headers, r))
+            for r in rows[1:]
+            if len(r) >= 2
+        ]
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
+@app.route("/global")
+def global_page():
+    return render_template("global.html")
 
+@app.route("/api/wars")
+def api_wars():
+    try:
+        sheet = service.spreadsheets()
+        result = sheet.values().get(
+            spreadsheetId=SPREADSHEET_ID,
+            range="War!B2:B"
+        ).execute()
+        values = result.get("values", [])
+        wars_raw = "\n".join([row[0] for row in values if row])
+
+        wars = []
+        text = wars_raw.replace('""', '"').strip()
+        current = ""
+        depth = 0
+        for char in text:
+            current += char
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    chunk = current.strip()
+                    current = ""
+                    if len(chunk) < 50 or "Name" not in chunk:
+                        continue
+                    try:
+                        war_data = json.loads(chunk)
+                        if war_data.get("Name", "").strip():
+                            wars.append(war_data)
+                    except Exception as e:
+                        wars.append({"error": f"Parse failed: {str(e)}", "raw": chunk})
+
+        return jsonify({"wars": wars})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 
+        
+@app.route("/wars")
+def wars_page():
+    return render_template("wars.html")
 
 
 
