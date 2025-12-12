@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function randomIncrement() {
-    if (progress < 60) return Math.random() * 5 + 2;
-    if (progress < 90) return Math.random() * 3 + 1;
+    if (progress < 60) return Math.random() * 10 + 2;
+    if (progress < 90) return Math.random() * 8 + 1;
     return Math.random() * 2 + 0.5;
   }
 
