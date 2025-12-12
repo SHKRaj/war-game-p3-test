@@ -29,18 +29,25 @@ body {
 }
 
 /* === LOGO === */
+/* === LOGO (under buttons) === */
 .loading-logo {
-  width: 600px;
-  max-width: 90%;
+  width: 680px;
+  max-width: 95%;
   position: fixed;
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100; 
-  opacity: 0.25; 
-  filter: drop-shadow(0 0 25px #00ffcc33);
-  pointer-events: none;
+  image-rendering: crisp-edges;
+  z-index: 150;
+  opacity: 0.15;
+  animation: fadeInLogo 1.5s ease forwards;
 }
+
+@keyframes fadeInLogo {
+  from { opacity: 0; transform: translateX(-50%) scale(0.95); }
+  to { opacity: 0.15; transform: translateX(-50%) scale(1); }
+}
+
 
 
 /* === LOADER TEXT === */
