@@ -418,7 +418,7 @@ def api_alliances():
         sheet = service.spreadsheets()
         result = sheet.values().get(
             spreadsheetId=SPREADSHEET_ID,
-            range="Alliances!A2:C"
+            range="Alliances!A2:E"
         ).execute()
         values = result.get("values", [])
 
@@ -426,11 +426,18 @@ def api_alliances():
         for row in values:
             if len(row) < 3:
                 continue
-            name, desc, members = row[0], row[1], row[2]
+            name = row[0] if len(row) > 0 else ""
+            desc = row[1] if len(row) > 1 else ""
+            members = [m.strip() for m in row[2].split(",")] if len(row) > 2 and row[2] else []
+            associated = [a.strip() for a in row[3].split(",")] if len(row) > 3 and row[3] else []
+            observers = [o.strip() for o in row[4].split(",")] if len(row) > 4 and row[4] else []
+
             alliances.append({
                 "Name": name,
                 "Desc": desc,
-                "Members": [m.strip() for m in members.split(",") if m.strip()]
+                "Members": members,
+                "Associated": associated,
+                "Observers": observers
             })
 
         return jsonify({"alliances": alliances})
@@ -445,7 +452,7 @@ def alliances_page():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 
 
 '''BASIC HOME TESTING

@@ -30,16 +30,18 @@ body {
 
 /* === LOGO === */
 .loading-logo {
-  width: 680px;
-  max-width: 95%;
+  width: 600px;
+  max-width: 90%;
   position: fixed;
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  image-rendering: crisp-edges;
-  z-index: 300;
-  opacity: 1;
+  z-index: 100; 
+  opacity: 0.25; 
+  filter: drop-shadow(0 0 25px #00ffcc33);
+  pointer-events: none;
 }
+
 
 /* === LOADER TEXT === */
 .loader {

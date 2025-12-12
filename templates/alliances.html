@@ -21,15 +21,27 @@ fetch("/api/alliances")
       data.alliances.forEach(a => {
         const card = document.createElement("div");
         card.classList.add("alliance-card");
+
+        const members = a.Members?.length
+          ? `<div class="alliance-section"><h3>Members</h3><ul>${a.Members.map(m => `<li>${m}</li>`).join("")}</ul></div>`
+          : "";
+
+        const associated = a.Associated?.length
+          ? `<div class="alliance-section"><h3>Associated</h3><ul>${a.Associated.map(m => `<li>${m}</li>`).join("")}</ul></div>`
+          : "";
+
+        const observers = a.Observers?.length
+          ? `<div class="alliance-section"><h3>Observers</h3><ul>${a.Observers.map(m => `<li>${m}</li>`).join("")}</ul></div>`
+          : "";
+
         card.innerHTML = `
           <h2>${a.Name || "Unnamed Alliance"}</h2>
           <p>${a.Desc || "No description provided."}</p>
-          ${
-            a.Members?.length
-              ? `<ul>${a.Members.map(m => `<li>${m}</li>`).join("")}</ul>`
-              : "<p>No members listed.</p>"
-          }
+          ${members || associated || observers
+            ? `${members}${associated}${observers}`
+            : "<p>No participants listed.</p>"}
         `;
+
         container.appendChild(card);
       });
     } else {
