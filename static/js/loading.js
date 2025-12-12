@@ -105,6 +105,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 }
 
+// Navigate to alliance page
+const allyBtn = document.getElementById("alliance-button");
+if (allyBtn) {
+    allyBtn.addEventListener("click", () => {
+      window.location.href = "/alliances";
+    });
+}
+
 const warBtn = document.getElementById("war-button");
 const warModal = document.getElementById("war-modal");
 const warBody = document.getElementById("war-body");

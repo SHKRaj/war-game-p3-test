@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Global Alliances | War Command{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/alliances.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>Global Alliances</h1>
+  <div id="alliances-list" class="alliances-grid"></div>
+  <button onclick="window.location.href='/'" class="back-btn">Return to Command</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+fetch("/api/alliances")
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("alliances-list");
+    if (data.alliances && data.alliances.length) {
+      data.alliances.forEach(a => {
+        const card = document.createElement("div");
+        card.classList.add("alliance-card");
+        card.innerHTML = `
+          <h2>${a.Name || "Unnamed Alliance"}</h2>
+          <p>${a.Desc || "No description provided."}</p>
+          ${
+            a.Members?.length
+              ? `<ul>${a.Members.map(m => `<li>${m}</li>`).join("")}</ul>`
+              : "<p>No members listed.</p>"
+          }
+        `;
+        container.appendChild(card);
+      });
+    } else {
+      container.innerHTML = "<p>No alliances detected.</p>";
+    }
+  })
+  .catch(err => {
+    document.getElementById("alliances-list").innerHTML = `<p>Error loading alliances: ${err}</p>`;
+  });
+</script>
+{% endblock %}

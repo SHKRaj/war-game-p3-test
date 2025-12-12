@@ -1,0 +1,70 @@
+body {
+  background-color: #000;
+  color: #00ffcc;
+  font-family: 'Consolas', monospace;
+  margin: 0;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+h1 {
+  text-align: center;
+  color: #00ffee;
+  text-shadow: 0 0 15px #00ffee88;
+  margin-bottom: 1rem;
+}
+
+.alliances-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+}
+
+.alliance-card {
+  background: rgba(0, 255, 204, 0.05);
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.alliance-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);
+}
+
+.alliance-card h2 {
+  color: #00ffee;
+  text-shadow: 0 0 10px #00ffee55;
+}
+
+.alliance-card ul {
+  text-align: left;
+  margin-top: 0.5rem;
+}
+
+.alliance-card li {
+  list-style-type: square;
+  margin-left: 1.2rem;
+  color: #00ffaa;
+}
+
+.back-btn {
+  display: block;
+  margin: 2rem auto;
+  padding: 0.7rem 1.8rem;
+  font-family: 'Consolas', monospace;
+  background: rgba(0, 255, 204, 0.15);
+  border: 1px solid #00ffcc;
+  color: #00ffcc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.back-btn:hover {
+  background: #00ffcc;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.7);
+}

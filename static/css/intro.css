@@ -126,90 +126,70 @@ body {
   opacity: 0.9;
 }
 
-/* === BUTTON BASE STYLE === */
-button {
-  font-family: 'Consolas', monospace;
-  border-radius: 8px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* === PRIMARY (ENTER COMMAND) === */
-#play-button {
-  background: #00ffcc;
-  color: #000;
-  border: none;
-  font-size: 1.3rem;
-  padding: 1rem 2.5rem;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-  margin-top: 2rem;
-  animation: pulseGlow 3s ease-in-out infinite;
-}
-
-#play-button:hover {
-  background: #00a3a3;
-  color: #fff;
-  box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
-  transform: translateY(-2px);
-}
-
-/* === SECONDARY BUTTONS (GLOBAL / WARS) === */
-#global-button,
-#war-button {
-  background: rgba(0, 255, 204, 0.15);
+/* === COMMAND BUTTONS (Unified Style) === */
+.cmd-btn {
+  background: rgba(0, 255, 204, 0.1);
   color: #00ffcc;
   border: 1.5px solid #00ffcc;
+  font-family: 'Consolas', monospace;
   font-size: 1rem;
-  padding: 0.7rem 1.8rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 0.9rem 2.2rem;
   margin: 0.6rem;
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.25);
+  transition: all 0.25s ease;
+  animation: pulseGlow 3s ease-in-out infinite;
 }
 
-#global-button:hover,
-#war-button:hover {
+.cmd-btn:hover {
   background: #00ffcc;
   color: #000;
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.7);
-  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.6);
+  transform: translateY(-3px);
 }
 
-#global-button:active,
-#war-button:active,
-#play-button:active {
+.cmd-btn:active {
   transform: translateY(1px);
-  box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
 }
 
-/* === BUTTON ALIGNMENT === */
-#main-content button {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0.5rem;
+/* === PRIMARY BUTTON (ENTER COMMAND) === */
+.primary {
+  background: #00ffcc;
+  color: #000;
+  font-size: 1.2rem;
+  padding: 1.1rem 2.8rem;
+  border: none;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+  animation-delay: 0s;
+}
+.primary:hover {
+  background: #00a3a3;
+  color: #fff;
 }
 
-@media (min-width: 768px) {
-  #main-content button {
-    margin: 0 0.6rem;
-  }
+/* === Button animation offsets === */
+#global-button { animation-delay: 0.8s; }
+#war-button { animation-delay: 1.6s; }
+#alliance-button { animation-delay: 2.4s; }
+
+/* === Button Cluster Alignment === */
+#button-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
 }
 
-/* === ANIMATIONS === */
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 204, 0.4); }
-  50% { box-shadow: 0 0 25px rgba(0, 255, 204, 0.8); }
+  0%, 100% { box-shadow: 0 0 12px rgba(0, 255, 204, 0.35); }
+  50% { box-shadow: 0 0 25px rgba(0, 255, 204, 0.9); }
 }
 
-#global-button {
-  animation: pulseGlow 3s ease-in-out infinite;
-  animation-delay: 1s;
-}
-
-#war-button {
-  animation: pulseGlow 3s ease-in-out infinite;
-  animation-delay: 2s;
-}
 
 /* === ENTER CODE PAGE === */
 #code-entry {

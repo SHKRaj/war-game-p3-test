@@ -1,10 +1,112 @@
 {% extends "base.html" %}
-{% block title %}Global Trends{% endblock %}
-{% block content %}
-  <h1>Global Metrics Dashboard</h1>
-  <canvas id="global-chart" width="600" height="400"></canvas>
+{% block title %}Global Trends | War Command{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
 {% endblock %}
+
+{% block content %}
+  <h1>Global Trends Overview</h1>
+  <div id="global-grid" class="grid-container"></div>
+  <button onclick="window.location.href='/'" class="back-btn">Return to Command</button>
+{% endblock %}
+
 {% block scripts %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+<script>
+// === Formatting helpers ===
+function formatNumber(value, decimals = 2) {
+  if (value === undefined || value === null || value === "") return "—";
+  const num = Number(value);
+  if (isNaN(num)) return value;
+  if (Math.abs(num) < 1000) return num.toFixed(decimals);
+  if (Math.abs(num) >= 1e12) return (num / 1e12).toFixed(2) + "T";
+  if (Math.abs(num) >= 1e9) return (num / 1e9).toFixed(2) + "B";
+  if (Math.abs(num) >= 1e6) return (num / 1e6).toFixed(2) + "M";
+  return num.toLocaleString(undefined, { maximumFractionDigits: decimals });
+}
+
+function formatPercent(value, decimals = 2) {
+  if (value === undefined || value === null || value === "") return "—";
+  const num = Number(value);
+  if (isNaN(num)) return value;
+  return (num * 100).toFixed(decimals) + "%";
+}
+
+function formatCurrency(value) {
+  if (value === undefined || value === null || value === "") return "—";
+  const num = Number(value);
+  if (isNaN(num)) return value;
+  if (Math.abs(num) >= 1e12) return "$" + (num / 1e12).toFixed(2) + "T";
+  if (Math.abs(num) >= 1e9) return "$" + (num / 1e9).toFixed(2) + "B";
+  if (Math.abs(num) >= 1e6) return "$" + (num / 1e6).toFixed(2) + "M";
+  return "$" + num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+// === Data loading ===
+fetch("/api/global_data")
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("global-grid");
+    if (!data.nations || !data.nations.length) {
+      container.innerHTML = "<p>No global data available.</p>";
+      return;
+    }
+
+    data.nations.forEach(n => {
+      const card = document.createElement("div");
+      card.classList.add("nation-card");
+
+      card.innerHTML = `
+        <h2>${n.Country}</h2>
+        <p><b>Leader:</b> ${n.Leader || "N/A"}</p>
+
+        <h3>Economy</h3>
+        <p><b>GDP:</b> ${formatCurrency(n.GDP)}</p>
+        <p><b>Debt:</b> ${formatCurrency(n.Debt)}</p>
+        <p><b>Debt-to-GDP:</b> ${formatPercent(n["Debt-to-GDP Ratio"])}</p>
+        <p><b>Inflation:</b> ${formatPercent(n["Inflation Rate"])}</p>
+        <p><b>Nominal GDP Growth:</b> ${formatPercent(n["Nominal GDP Growth"])}</p>
+        <p><b>Real GDP Growth:</b> ${formatPercent(n["Real GDP Growth"])}</p>
+        <p><b>Interest Rate:</b> ${formatPercent(n["Interest Rate"])}</p>
+        <p><b>Unemployment:</b> ${formatPercent(n["Unemployment Rate"])}</p>
+        <p><b>Budget Balance:</b> ${formatCurrency(n["Total Budget Balance"])}</p>
+        <p><b>Performance Capacity:</b> ${formatNumber(n["Performance Capacity"])}</p>
+
+        <h3>Demographics</h3>
+        <p><b>Population:</b> ${formatNumber(n.Population, 0)}</p>
+        <p><b>Population Growth:</b> ${formatPercent(n["Population Growth Rate"])}</p>
+        <p><b>Birth Rate:</b> ${formatPercent(n["Birth Rate"])}</p>
+        <p><b>Death Rate:</b> ${formatPercent(n["Death Rate"])}</p>
+        <p><b>Migration Rate:</b> ${formatPercent(n["Migration Rate"])}</p>
+
+        <h3>Technology & Industry</h3>
+        <p><b>Industrial Index:</b> ${formatNumber(n["Industrial Score"])}</p>
+        <p><b>Technology Index:</b> ${formatNumber(n["Technology Score"])}</p>
+        <p><b>R&D:</b> ${formatNumber(n["Research and Development"])}</p>
+        <p><b>Post-Industrial Level:</b> ${formatNumber(n["Post-Industrial Advancement"])}</p>
+
+        <h3>Strategic Power</h3>
+        <p><b>Power Projection:</b> ${formatNumber(n["Power Projection Index"])}</p>
+        <p><b>Firepower Index:</b> ${formatNumber(n["FIREPOWER INDEX"])}</p>
+
+        <h3>Energy & Environment</h3>
+        <p><b>Energy Resilience:</b> ${formatNumber(n["Energy Resilience Index"])}</p>
+        <p><b>Energy Capacity:</b> ${formatNumber(n["Total Energy Capacity (Exajoules)"])}</p>
+        <p><b>Trade Dependency:</b> ${formatNumber(n["Energy Trade Dependency Index"])}</p>
+        <p><b>CO₂ Emissions:</b> ${formatNumber(n["Carbon Net Emissions (MtCO₂)"])}</p>
+
+        <h3>Governance & Society</h3>
+        <p><b>Consumer Confidence:</b> ${formatPercent(n["Consumer Confidence Index"])}</p>
+        <p><b>Popularity:</b> ${formatPercent(n.Popularity)}</p>
+        <p><b>Sufficiency:</b> ${formatPercent(n.Sufficiency)}</p>
+      `;
+
+      container.appendChild(card);
+    });
+  })
+  .catch(err => {
+    document.getElementById("global-grid").innerHTML =
+      `<p>Error loading global data: ${err}</p>`;
+  });
+</script>
 {% endblock %}

@@ -292,16 +292,78 @@ def api_global_data():
         sheet = service.spreadsheets()
         result = sheet.values().get(
             spreadsheetId=SPREADSHEET_ID,
-            range="Global!A:Z"
+            range="Global!A:LE"
         ).execute()
+
         rows = result.get("values", [])
+        if not rows or len(rows) < 2:
+            return jsonify({"error": "No data found"}), 404
+
         headers = rows[0]
-        data = [
-            dict(zip(headers, r))
-            for r in rows[1:]
-            if len(r) >= 2
+        data = []
+        for r in rows[1:]:
+            entry = dict(zip(headers, r))
+            # Filter out empty or placeholder entries
+            if entry.get("Country") and entry.get("ID"):
+                data.append(entry)
+
+        # Limit what we send to front-end
+        simplified = [
+            {
+                "Year": e.get("timestamp", ""),
+                "ID": e.get("ID", ""),
+                "Country": e.get("Country", ""),
+                "Leader": e.get("Leader", ""),
+                
+                # --- Fiscal & Economic Base ---
+                "GDP": e.get("GDP", ""),
+                "Debt": e.get("Debt", ""),
+                "Debt-to-GDP Ratio": e.get("Debt-to-GDP Ratio", ""),
+                "Government Revenue": e.get("Government Revenue", ""),
+                "Total Budget Balance": e.get("Total Budget Balance", ""),
+                
+                # --- Macro Indicators ---
+                "Inflation Rate": e.get("Inflation Rate", ""),
+                "Nominal GDP Growth": e.get("Nominal GDP Growth", ""),
+                "Real GDP Growth": e.get("Real GDP Growth", ""),
+                "Unemployment Rate": e.get("Unemployment Rate", ""),
+                "Interest Rate": e.get("Nominal Interest Rate", ""),
+                "Debt Sustainability Index": e.get("Debt Sustainability Index", ""),
+                
+                # --- Population & Demographics ---
+                "Population": e.get("Population", ""),
+                "Population Growth Rate": e.get("Population Growth Rate", ""),
+                "Birth Rate": e.get("Birth Rate", ""),
+                "Death Rate": e.get("Death Rate", ""),
+                "Migration Rate": e.get("Migration Rate", ""),
+                
+                # --- Industrial & Technology ---
+                "Industrial Score": e.get("Industrial Score", ""),
+                "Technology Score": e.get("Technology Score", ""),
+                "Research and Development": e.get("Research and Development", ""),
+                "Post-Industrial Advancement": e.get("Post-Industrial Advancement", ""),
+                
+                # --- Strategic Power & Capacity ---
+                "Power Projection Index": e.get("POWER PROJECTION INDEX", ""),
+                "FIREPOWER INDEX": e.get("FIREPOWER INDEX", ""),
+                "Performance Capacity": e.get("Performance Capacity", ""),
+                
+                # --- Energy & Sustainability ---
+                "Energy Resilience Index": e.get("Energy Resilience Index", ""),
+                "Total Energy Capacity (Exajoules)": e.get("Total Energy Capacity (Exajoules)", ""),
+                "Energy Trade Dependency Index": e.get("Energy Trade Dependency Index", ""),
+                "Carbon Net Emissions (MtCO₂)": e.get("Carbon Net Emissions (MtCO₂)", ""),
+                
+                # --- Governance & Confidence ---
+                "Consumer Confidence Index": e.get("Consumer Confidence Index", ""),
+                "Popularity": e.get("Popularity", ""),
+                "Sufficiency": e.get("Sufficiency", "")
+            }
+            for e in data
         ]
-        return jsonify(data)
+
+        return jsonify({"nations": simplified, "count": len(simplified)})
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -350,6 +412,35 @@ def api_wars():
 def wars_page():
     return render_template("wars.html")
 
+@app.route("/api/alliances")
+def api_alliances():
+    try:
+        sheet = service.spreadsheets()
+        result = sheet.values().get(
+            spreadsheetId=SPREADSHEET_ID,
+            range="Alliances!A2:C"
+        ).execute()
+        values = result.get("values", [])
+
+        alliances = []
+        for row in values:
+            if len(row) < 3:
+                continue
+            name, desc, members = row[0], row[1], row[2]
+            alliances.append({
+                "Name": name,
+                "Desc": desc,
+                "Members": [m.strip() for m in members.split(",") if m.strip()]
+            })
+
+        return jsonify({"alliances": alliances})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/alliances")
+def alliances_page():
+    return render_template("alliances.html")
 
 
 
