@@ -19,6 +19,26 @@ load_dotenv()
 # I don't want my google creds to be public on GitHub, so I am loading it at runtime.
 # dotenv is a very small library that reads a file named .env (key-value pairs) and temporarily sets them in the OS environment
 
+import time
+from functools import wraps
+
+cache_data = {}
+cache_ttl = 10800  # (3 hours rn)
+
+def cache_route(ttl=cache_ttl):
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            key = f.__name__
+            now = time.time()
+            if key in cache_data and (now - cache_data[key]["time"]) < ttl:
+                return cache_data[key]["value"]
+            result = f(*args, **kwargs)
+            cache_data[key] = {"value": result, "time": now}
+            return result
+        return wrapped
+    return decorator
+
 # Flask app setup
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
@@ -287,6 +307,7 @@ def api_data_sections(playercode):
 
 
 @app.route("/api/global_data")
+@cache_route(300)
 def api_global_data():
     try:
         sheet = service.spreadsheets()
@@ -294,7 +315,6 @@ def api_global_data():
             spreadsheetId=SPREADSHEET_ID,
             range="Global!A:LE"
         ).execute()
-
         rows = result.get("values", [])
         if not rows or len(rows) < 2:
             return jsonify({"error": "No data found"}), 404
@@ -303,65 +323,48 @@ def api_global_data():
         data = []
         for r in rows[1:]:
             entry = dict(zip(headers, r))
-            # Filter out empty or placeholder entries
             if entry.get("Country") and entry.get("ID"):
                 data.append(entry)
 
-        # Limit what we send to front-end
         simplified = [
             {
                 "Year": e.get("timestamp", ""),
                 "ID": e.get("ID", ""),
                 "Country": e.get("Country", ""),
                 "Leader": e.get("Leader", ""),
-                
-                # --- Fiscal & Economic Base ---
                 "GDP": e.get("GDP", ""),
                 "Debt": e.get("Debt", ""),
                 "Debt-to-GDP Ratio": e.get("Debt-to-GDP Ratio", ""),
                 "Government Revenue": e.get("Government Revenue", ""),
                 "Total Budget Balance": e.get("Total Budget Balance", ""),
-                
-                # --- Macro Indicators ---
                 "Inflation Rate": e.get("Inflation Rate", ""),
                 "Nominal GDP Growth": e.get("Nominal GDP Growth", ""),
                 "Real GDP Growth": e.get("Real GDP Growth", ""),
                 "Unemployment Rate": e.get("Unemployment Rate", ""),
                 "Interest Rate": e.get("Nominal Interest Rate", ""),
                 "Debt Sustainability Index": e.get("Debt Sustainability Index", ""),
-                
-                # --- Population & Demographics ---
                 "Population": e.get("Population", ""),
                 "Population Growth Rate": e.get("Population Growth Rate", ""),
                 "Birth Rate": e.get("Birth Rate", ""),
                 "Death Rate": e.get("Death Rate", ""),
                 "Migration Rate": e.get("Migration Rate", ""),
-                
-                # --- Industrial & Technology ---
                 "Industrial Score": e.get("Industrial Score", ""),
                 "Technology Score": e.get("Technology Score", ""),
                 "Research and Development": e.get("Research and Development", ""),
                 "Post-Industrial Advancement": e.get("Post-Industrial Advancement", ""),
-                
-                # --- Strategic Power & Capacity ---
                 "Power Projection Index": e.get("POWER PROJECTION INDEX", ""),
                 "FIREPOWER INDEX": e.get("FIREPOWER INDEX", ""),
                 "Performance Capacity": e.get("Performance Capacity", ""),
-                
-                # --- Energy & Sustainability ---
                 "Energy Resilience Index": e.get("Energy Resilience Index", ""),
                 "Total Energy Capacity (Exajoules)": e.get("Total Energy Capacity (Exajoules)", ""),
                 "Energy Trade Dependency Index": e.get("Energy Trade Dependency Index", ""),
                 "Carbon Net Emissions (MtCO₂)": e.get("Carbon Net Emissions (MtCO₂)", ""),
-                
-                # --- Governance & Confidence ---
                 "Consumer Confidence Index": e.get("Consumer Confidence Index", ""),
                 "Popularity": e.get("Popularity", ""),
                 "Sufficiency": e.get("Sufficiency", "")
             }
             for e in data
         ]
-
         return jsonify({"nations": simplified, "count": len(simplified)})
 
     except Exception as e:
@@ -372,6 +375,7 @@ def global_page():
     return render_template("global.html")
 
 @app.route("/api/wars")
+@cache_route(300)
 def api_wars():
     try:
         sheet = service.spreadsheets()
@@ -406,13 +410,14 @@ def api_wars():
 
         return jsonify({"wars": wars})
     except Exception as e:
-        return jsonify({"error": str(e)}), 
+        return jsonify({"error": str(e)}), 500
         
 @app.route("/wars")
 def wars_page():
     return render_template("wars.html")
 
 @app.route("/api/alliances")
+@cache_route(300)
 def api_alliances():
     try:
         sheet = service.spreadsheets()
@@ -431,7 +436,6 @@ def api_alliances():
             members = [m.strip() for m in row[2].split(",")] if len(row) > 2 and row[2] else []
             associated = [a.strip() for a in row[3].split(",")] if len(row) > 3 and row[3] else []
             observers = [o.strip() for o in row[4].split(",")] if len(row) > 4 and row[4] else []
-
             alliances.append({
                 "Name": name,
                 "Desc": desc,
@@ -441,9 +445,9 @@ def api_alliances():
             })
 
         return jsonify({"alliances": alliances})
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/alliances")
 def alliances_page():
