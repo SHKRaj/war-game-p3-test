@@ -20,6 +20,50 @@ document.addEventListener("DOMContentLoaded", function () {
   let progress = 0;
   let bgIndex = 0;
 
+  // === AUTO-DETECT MUSIC TRACKS FROM SELECTOR ===
+  function getMusicTracks() {
+    const selector = document.getElementById("music-selector");
+    if (!selector) return [];
+    return Array.from(selector.options).map(opt => opt.value);
+  }
+
+  // === PRELOAD MUSIC TRACKS ===
+  const musicTracks = getMusicTracks();
+
+  const audioCache = {};
+  let tracksLoaded = 0;
+
+  function preloadMusic() {
+    return new Promise((resolve) => {
+      if (musicTracks.length === 0) return resolve();
+
+      musicTracks.forEach((src) => {
+        const audio = new Audio();
+        audio.src = src;
+        audio.preload = "auto";
+
+        audio.addEventListener(
+          "canplaythrough",
+          () => {
+            tracksLoaded++;
+            audioCache[src] = audio;
+            if (tracksLoaded === musicTracks.length) {
+              console.log("✅ All music preloaded");
+              resolve();
+            }
+          },
+          { once: true }
+        );
+
+        audio.addEventListener("error", () => {
+          console.warn("⚠️ Failed to preload:", src);
+          tracksLoaded++;
+          if (tracksLoaded === musicTracks.length) resolve();
+        });
+      });
+    });
+  }
+
   function changeBackground() {
     if (backgrounds.length === 0) return;
     bgIndex = (bgIndex + 1) % backgrounds.length;
@@ -48,22 +92,26 @@ document.addEventListener("DOMContentLoaded", function () {
     progress += randomIncrement();
     if (progress > 100) progress = 100;
     counter.textContent = progress.toFixed(0) + "%";
+
     if (progress >= 100) {
-      setTimeout(() => {
-        if (loadingLogo) loadingLogo.classList.add("move-top-left");
-        if (completeSound) {
-          completeSound.volume = 0.3;
-          completeSound.play().catch(() => {});
-        }
-        loader.style.transition = "opacity 1s ease";
-        loader.style.opacity = 0;
+      preloadMusic().then(() => {
         setTimeout(() => {
-          loader.style.display = "none";
-          main.style.display = "block";
-          document.body.style.overflow = "auto";
-          sessionStorage.setItem("hasVisitedIntro", "true");
+          if (loadingLogo) loadingLogo.classList.add("move-top-left");
+          if (completeSound) {
+            completeSound.volume = 0.3;
+            completeSound.play().catch(() => {});
+          }
+          loader.style.transition = "opacity 1s ease";
+          loader.style.opacity = 0;
+          setTimeout(() => {
+            loader.style.display = "none";
+            main.style.display = "block";
+            document.body.style.overflow = "auto";
+            sessionStorage.setItem("hasVisitedIntro", "true");
+            window.preloadedAudioCache = audioCache;
+          }, 1000);
         }, 1000);
-      }, 1000);
+      });
     } else {
       setTimeout(updateProgress, randomDelay());
     }

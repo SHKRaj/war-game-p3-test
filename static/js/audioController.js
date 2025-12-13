@@ -87,15 +87,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     }
 
-  // --- MUSIC SWITCHER ---
+  // --- MUSIC SWITCHER (uses preloaded cache if available) ---
   if (selector) {
     selector.addEventListener("change", (e) => {
       const newSrc = e.target.value;
       localStorage.setItem("bgMusicSrc", newSrc);
+
+      // See if it was preloaded in memory
+      const cachedAudio = window.preloadedAudioCache?.[newSrc];
+
       bgMusic.pause();
-      bgMusic.src = newSrc;
       bgMusic.currentTime = 0;
-      if (!isMuted) bgMusic.play().catch(() => {});
+
+      if (cachedAudio) {
+        // Use the already-buffered audio
+        bgMusic.src = ""; // clear any pending source
+        bgMusic.srcObject = null;
+        cachedAudio.pause(); 
+        cachedAudio.currentTime = 0;
+        cachedAudio.loop = true;
+        cachedAudio.volume = bgMusic.volume;
+
+        if (!isMuted) cachedAudio.play().catch(() => {});
+        console.log(`🎶 Using cached track: ${newSrc}`);
+      } else {
+        // fallback if not preloaded
+        bgMusic.src = newSrc;
+        if (!isMuted) bgMusic.play().catch(() => {});
+        console.log(`🎵 Streaming track: ${newSrc}`);
+      }
     });
   }
 

@@ -43,6 +43,12 @@ def cache_route(ttl=cache_ttl):
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
 
+@app.after_request
+def add_cache_headers(response):
+    if response.content_type.startswith("audio/"):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
+
 # Google Sheets setup; not .readonly since I am going to edit the sheet. 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
@@ -70,7 +76,6 @@ def home():
     images = [f"images/{img}" for img in os.listdir(image_folder)
               if img.lower().endswith((".jpg", ".jpeg", ".png"))]
     return render_template("intro.html", image_files=images)
-
 
 @app.route("/enter_code", methods=["GET", "POST"])
 def enter_code():
