@@ -1,3 +1,5 @@
+// CODE MADE WITH ASSISTANCE BY CHATGPT
+
 async function loadGlobalTrends() {
   const res = await fetch('/api/global_data');
   const data = await res.json();

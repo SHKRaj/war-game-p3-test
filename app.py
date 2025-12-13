@@ -23,13 +23,13 @@ import time
 from functools import wraps
 
 cache_data = {}
-cache_ttl = 10800  # (3 hours rn)
+cache_ttl = 5400  # (2.5 hours rn)
 
 def cache_route(ttl=cache_ttl):
     def decorator(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
-            key = f.__name__
+            key = f"{f.__name__}:{json.dumps(args)}:{json.dumps(kwargs, sort_keys=True)}"
             now = time.time()
             if key in cache_data and (now - cache_data[key]["time"]) < ttl:
                 return cache_data[key]["value"]
@@ -96,6 +96,7 @@ def dashboard():
 
 # === API ENDPOINTS ===
 
+@cache_route(300)
 @app.route("/api/player/<playercode>")
 def api_player(playercode):
     """Load all relevant info for the playercode sheet."""
@@ -164,7 +165,7 @@ def api_update_policies(playercode):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+@cache_route(300)
 @app.route("/api/data/<playercode>")
 def api_data_sections(playercode):
     """Load and format structured sheet data for display."""
@@ -201,54 +202,42 @@ def api_data_sections(playercode):
             "Special Assets Raw": "JQ29",
         }
 
+        ranges = [f"{playercode}!{ref}" for ref in cells.values()]
+        batch = service.spreadsheets().values().batchGet(
+            spreadsheetId=SPREADSHEET_ID,
+            ranges=ranges
+        ).execute()
+
+        value_ranges = batch.get("valueRanges", [])
         result = {}
 
-        for key, ref in cells.items():
-            raw_data = (
-                service.spreadsheets()
-                .values()
-                .get(spreadsheetId=SPREADSHEET_ID, range=f"{playercode}!{ref}")
-                .execute()
-                .get("values", [[None]])[0][0]
-            )
-
-            if not raw_data:
+        for key, value_range in zip(cells.keys(), value_ranges):
+            values = value_range.get("values", [])
+            if not values or not values[0]:
                 result[key] = None
                 continue
 
-            raw = raw_data.strip()
+            raw = values[0][0].strip()
 
-            # === Military-like Sections (Airforce, Army, Navy, Rockets, Special Assets Raw) ===
             if key in ["Airforce", "Army", "Navy", "Rockets", "Special Assets Raw"]:
                 structured = []
-                # Split by double newlines between major units
                 blocks = [b.strip() for b in raw.split("\n\n") if b.strip()]
-
                 for block in blocks:
                     lines = [ln.strip() for ln in block.split("\n") if ln.strip()]
                     if not lines:
                         continue
                     header = lines[0]
-                    items = []
-
-                    # Add remaining lines as items
-                    if len(lines) > 1:
-                        for ln in lines[1:]:
-                            # Skip empty or purely numeric lines like "(3)" or "(NA)" if present
-                            if re.match(r"^\(?[0-9NAna\.]*\)?$", ln.strip()):
-                                continue
-                            items.append(ln.strip())
-
+                    items = [
+                        ln.strip() for ln in lines[1:]
+                        if not re.match(r"^\(?[0-9NAna\.]*\)?$", ln.strip())
+                    ]
                     structured.append({"header": header, "items": items})
-
                 result[key] = {"sections": structured}
                 continue
 
-            # === Wars ===
             if key == "Wars":
                 wars = []
                 text = raw.replace('""', '"').strip()
-
                 current = ""
                 depth = 0
                 for char in text:
@@ -260,25 +249,17 @@ def api_data_sections(playercode):
                         if depth == 0:
                             chunk = current.strip()
                             current = ""
-                            # Skip fragments too short to be a valid war
                             if len(chunk) < 50 or "Name" not in chunk:
                                 continue
                             try:
                                 war_data = json.loads(chunk)
-                                # Ignore empty-name entries
                                 if war_data.get("Name", "").strip():
                                     wars.append(war_data)
                             except Exception as e:
                                 wars.append({"error": f"Parse failed: {str(e)}", "raw": chunk})
-
-                if not wars:
-                    wars.append({"error": "No valid wars found", "raw": text})
-
-                result[key] = {"wars": wars}
+                result[key] = {"wars": wars or [{"error": "No valid wars found", "raw": text}]}
                 continue
 
-
-            # === Economic / Governance blocks ===
             if "|" in raw and ":" in raw:
                 header, rest = raw.split("|", 1)
                 stats = {}
@@ -289,10 +270,8 @@ def api_data_sections(playercode):
                 result[key] = {"title": header.strip(), "stats": stats}
                 continue
 
-            # === Simple multi-item sections (Departments, Budgets, etc.) ===
             text = raw.replace("\n", ";")
             parts = [p.strip() for p in text.split(";") if p.strip()]
-
             if "|" in parts[0]:
                 header, *rest = parts
                 result[key] = {"title": header.replace("|", "").strip(), "items": rest}
@@ -305,10 +284,8 @@ def api_data_sections(playercode):
                 result[key] = raw
 
         return jsonify(result)
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 
 @app.route("/api/global_data")

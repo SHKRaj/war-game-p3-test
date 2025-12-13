@@ -1,3 +1,5 @@
+// CODE MADE WITH ASSISTANCE BY CHATGPT
+
 window.initDashboard = async function () {
   const playercode = document.body.dataset.playercode || "TEST";
   console.log("Dashboard initializing for", playercode);
@@ -7,17 +9,31 @@ window.initDashboard = async function () {
     policies: document.getElementById("policies-section"),
   });
 
+  // === FETCH OR LOAD CACHED PLAYER SHEET DATA ===
+  let playerData = null;
+  const cached = sessionStorage.getItem("cachedPlayerData");
+  if (cached) {
+    console.log("⚡ Using cached player data");
+    playerData = JSON.parse(cached);
+    sessionStorage.removeItem("cachedPlayerData"); // clear to avoid stale data
+  } else {
+    try {
+      const res = await fetch(`/api/player/${playercode}`);
+      playerData = await res.json();
+      if (!playerData || playerData.error) throw new Error(playerData?.error || "No data");
+    } catch (err) {
+      console.error("Failed to load player data:", err);
+      return;
+    }
+  }
+  const rows = playerData.data || [];
+
   // === LOAD CONTRACT DATA ===
-  async function loadContracts() {
+  async function loadContracts(rows) {
     const section = document.getElementById("contracts-section");
     section.innerHTML = `<p>Loading...</p>`;
 
     try {
-      const res = await fetch(`/api/player/${playercode}`);
-      const data = await res.json();
-      if (!data || data.error) throw new Error(data?.error || "No data");
-
-      const rows = data.data || [];
       const lineItems = [];
       for (let i = 1; i < rows.length; i++) {
         const h = rows[i][7];
@@ -86,7 +102,7 @@ window.initDashboard = async function () {
   }
 
   // === LOAD POLICY DATA ===
-  async function loadPolicies() {
+  async function loadPolicies(rows) {
     const section = document.getElementById("policies-section");
     section.innerHTML = `<p>Loading...</p>`;
 
@@ -104,11 +120,7 @@ window.initDashboard = async function () {
     };
 
     try {
-      const res = await fetch(`/api/player/${playercode}`);
-      const data = await res.json();
-      if (!data || data.error) throw new Error(data?.error || "No data");
-
-      const rows = data.data || [];
+      // current official policies from Sheets
       const current = [];
       for (let i = 59; i < 69; i++) current.push(rows[i]?.[12] || "");
 
@@ -130,20 +142,47 @@ window.initDashboard = async function () {
         section.appendChild(div);
       });
 
-      document.getElementById("save-policies").onclick = async () => {
+      const saveBtn = document.getElementById("save-policies");
+
+      // ---- PENDING STATE HANDLER ----
+      const pending = JSON.parse(localStorage.getItem("pendingPolicies") || "[]");
+      if (pending.length && JSON.stringify(pending) !== JSON.stringify(current)) {
+        // still waiting for daily sheet sync
+        saveBtn.disabled = true;
+        saveBtn.textContent = "⏳ Pending daily update...";
+      } else {
+        // clear stale pending if sheet has caught up
+        localStorage.removeItem("pendingPolicies");
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Policies";
+      }
+
+      // ---- SAVE HANDLER ----
+      saveBtn.onclick = async () => {
         const selected = Object.keys(policyOptions).map(l =>
           document.getElementById(`policy-${l}`).value
         );
+
+        // Save to localStorage as pending
+        localStorage.setItem("pendingPolicies", JSON.stringify(selected));
+        localStorage.setItem("pendingTimestamp", Date.now());
+        saveBtn.disabled = true;
+        saveBtn.textContent = "⏳ Pending daily update...";
+
         const res = await fetch(`/api/policies/${playercode}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ policies: selected })
         });
         const out = await res.json();
-        alert(out.status === "policies updated"
-          ? "✅ Policies saved successfully!"
-          : `⚠️ ${out.error || "Error saving policies"}`);
+
+        if (out.status === "policies updated") {
+          alert("✅ Policy change submitted — will take effect after daily sync.");
+        } else {
+          alert(`⚠️ ${out.error || "Error saving policies"}`);
+        }
       };
+
     } catch (err) {
       console.error("Policy load error:", err);
       section.innerHTML = `<h2>Policies</h2><p>Failed to load policy data.</p>`;
@@ -231,8 +270,7 @@ window.initDashboard = async function () {
 
       if (val === null) {
         card.innerHTML += `<p><i>No data available</i></p>`;
-      } 
-      else if (typeof val === "object" && Array.isArray(val.sections)) {
+      } else if (typeof val === "object" && Array.isArray(val.sections)) {
         val.sections.forEach(section => {
           const container = document.createElement("div");
           container.classList.add("intel-subsection");
@@ -263,8 +301,7 @@ window.initDashboard = async function () {
 
           card.appendChild(container);
         });
-      }
-      else if (typeof val === "object" && val.items) {
+      } else if (typeof val === "object" && val.items) {
         if (val.title) card.innerHTML += `<p><b>${val.title}</b></p>`;
         const list = document.createElement("ul");
         val.items.forEach(item => {
@@ -273,9 +310,7 @@ window.initDashboard = async function () {
           list.appendChild(li);
         });
         card.appendChild(list);
-      } 
-      else if (typeof val === "object" && val.stats) {
-        // NEW: handle stats objects cleanly
+      } else if (typeof val === "object" && val.stats) {
         const list = document.createElement("ul");
         for (const [k, v] of Object.entries(val.stats)) {
           const li = document.createElement("li");
@@ -283,38 +318,34 @@ window.initDashboard = async function () {
           list.appendChild(li);
         }
         card.appendChild(list);
-      }
-      else if (typeof val === "object" && val.wars) {
+      } else if (typeof val === "object" && val.wars) {
         val.wars.forEach(war => {
-            const block = document.createElement("div");
-            block.classList.add("intel-subsection");
-            block.innerHTML = `<h4>${war.Name || "Unnamed Conflict"}</h4>
-            <p>${war.Desc || ""}</p>`;
-            if (war.Sides) {
+          const block = document.createElement("div");
+          block.classList.add("intel-subsection");
+          block.innerHTML = `<h4>${war.Name || "Unnamed Conflict"}</h4>
+          <p>${war.Desc || ""}</p>`;
+          if (war.Sides) {
             const ul = document.createElement("ul");
             war.Sides.forEach(side => {
-                const li = document.createElement("li");
-                li.innerHTML = `<b>${side.Name}</b> — ${side.Nations} 
-                (Pts: ${side.Pts || "?"}, Backers: ${side.Backers || "Unknown"})`;
-                ul.appendChild(li);
+              const li = document.createElement("li");
+              li.innerHTML = `<b>${side.Name}</b> — ${side.Nations}
+              (Pts: ${side.Pts || "?"}, Backers: ${side.Backers || "Unknown"})`;
+              ul.appendChild(li);
             });
             block.appendChild(ul);
-            }
-            card.appendChild(block);
+          }
+          card.appendChild(block);
         });
-        }
-      else if (typeof val === "object") {
+      } else if (typeof val === "object") {
         const [subk, subv] = Object.entries(val)[0];
         card.innerHTML += `<p><b>${subk}:</b> ${subv}</p>`;
-      } 
-      else {
+      } else {
         card.innerHTML += `<p>${val}</p>`;
       }
 
       grid.appendChild(card);
     });
 
-    // === Fade-in Animation ===
     intelOutput.style.opacity = 0;
     requestAnimationFrame(() => {
       intelOutput.style.transition = "opacity 0.6s ease-in";
@@ -324,6 +355,6 @@ window.initDashboard = async function () {
 
   // === EXECUTION ORDER ===
   await loadIntelData();
-  await loadContracts();
-  await loadPolicies();
+  await loadContracts(rows);
+  await loadPolicies(rows);
 };

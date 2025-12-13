@@ -1,3 +1,5 @@
+// CODE MADE WITH ASSISTANCE BY CHATGPT
+
 document.addEventListener("DOMContentLoaded", function () {
   const counter = document.getElementById("loading-counter");
   const tip = document.getElementById("loading-tip");
@@ -19,6 +21,46 @@ document.addEventListener("DOMContentLoaded", function () {
   const backgrounds = window.backgrounds || [];
   let progress = 0;
   let bgIndex = 0;
+
+
+  // === PRELOAD PLAYER DATA IF SAVED CODE EXISTS ===
+  const savedCode = localStorage.getItem("savedPlayerCode");
+  if (savedCode) {
+    console.log("🔍 Found saved player code:", savedCode);
+    sessionStorage.setItem("autologinCode", savedCode);
+
+    setTimeout(() => {
+      tip.style.transition = "opacity 0.6s ease";
+      tip.style.opacity = 0;
+      setTimeout(() => {
+        tip.textContent = `Authenticating ${savedCode}...`;
+        tip.style.opacity = 1;
+      }, 600);
+    }, 1000);
+
+    Promise.all([
+      fetch(`/api/player/${savedCode}`).then(r => r.json()).catch(() => null),
+      fetch(`/api/data/${savedCode}`).then(r => r.json()).catch(() => null)
+    ])
+      .then(([player, intel]) => {
+        if (player) sessionStorage.setItem("cachedPlayerData", JSON.stringify(player));
+        if (intel) sessionStorage.setItem("cachedIntelData", JSON.stringify(intel));
+        console.log("✅ Preloaded player data for", savedCode);
+
+        setTimeout(() => {
+          tip.style.transition = "opacity 0.6s ease";
+          tip.style.opacity = 0;
+          setTimeout(() => {
+            tip.textContent = "Authentication confirmed. Establishing uplink...";
+            tip.style.opacity = 1;
+          }, 600);
+        }, 2500);
+      })
+      .catch(() => {
+        tip.textContent = "⚠️ Failed to prefetch player data. Proceeding offline mode.";
+      });
+  }
+
 
   // === AUTO-DETECT MUSIC TRACKS FROM SELECTOR ===
   function getMusicTracks() {

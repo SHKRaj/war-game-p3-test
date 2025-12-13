@@ -14,4 +14,30 @@
 
   <div id="code-hint">⚠ Unauthorized access is monitored.</div>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("code-form");
+    const input = form.querySelector("input[name='playercode']");
+
+    const savedCode = localStorage.getItem("savedPlayerCode");
+    if (savedCode) {
+      input.value = savedCode;
+      form.submit();
+      return;
+    }
+
+    const remember = document.createElement("label");
+    remember.innerHTML = `
+      <input type="checkbox" id="remember-code"> Remember this code
+    `;
+    form.appendChild(remember);
+
+    form.addEventListener("submit", () => {
+      const code = input.value.trim();
+      if (document.getElementById("remember-code").checked && code) {
+        localStorage.setItem("savedPlayerCode", code);
+      }
+    });
+  });
+</script>
 {% endblock %}

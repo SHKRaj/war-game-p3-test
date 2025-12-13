@@ -1,5 +1,6 @@
 // === GLOBAL AUDIO CONTROLLER ===
 // Keeps background music + mute/settings persistent across all pages
+// CODE MADE WITH ASSISTANCE BY CHATGPT 
 
 document.addEventListener("DOMContentLoaded", () => {
   const bgMusic = document.getElementById("bg-music");
