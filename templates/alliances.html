@@ -3,53 +3,107 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/alliances.css') }}">
+<style>
+  #search-bar {
+    width: 60%;
+    max-width: 400px;
+    margin: 15px auto;
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    background-color: #111;
+    color: #eee;
+    font-size: 1rem;
+    transition: 0.2s border;
+  }
+  #search-bar:focus {
+    border-color: #00ff99;
+    outline: none;
+  }
+  .no-results {
+    text-align: center;
+    color: #aaa;
+    margin-top: 20px;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
   <h1>Global Alliances</h1>
+  
+  <!-- Search bar -->
+  <input 
+    type="text" 
+    id="search-bar" 
+    placeholder="Search alliances, members, or descriptions..."
+    autocomplete="off">
+  
   <div id="alliances-list" class="alliances-grid"></div>
   <button onclick="window.location.href='/'" class="back-btn">Return to Command</button>
 {% endblock %}
 
 {% block scripts %}
 <script>
+let allAlliances = [];
+
+function renderAlliances(list) {
+  const container = document.getElementById("alliances-list");
+  container.innerHTML = "";
+
+  if (!list.length) {
+    container.innerHTML = `<p class="no-results">No alliances match your search.</p>`;
+    return;
+  }
+
+  list.forEach(a => {
+    const card = document.createElement("div");
+    card.classList.add("alliance-card");
+
+    const members = a.Members?.length
+      ? `<div class="alliance-section"><h3>Members</h3><ul>${a.Members.map(m => `<li>${m}</li>`).join("")}</ul></div>`
+      : "";
+
+    const associated = a.Associated?.length
+      ? `<div class="alliance-section"><h3>Associated</h3><ul>${a.Associated.map(m => `<li>${m}</li>`).join("")}</ul></div>`
+      : "";
+
+    const observers = a.Observers?.length
+      ? `<div class="alliance-section"><h3>Observers</h3><ul>${a.Observers.map(m => `<li>${m}</li>`).join("")}</ul></div>`
+      : "";
+
+    card.innerHTML = `
+      <h2>${a.Name || "Unnamed Alliance"}</h2>
+      <p>${a.Desc || "No description provided."}</p>
+      ${members || associated || observers
+        ? `${members}${associated}${observers}`
+        : "<p>No participants listed.</p>"}
+    `;
+
+    container.appendChild(card);
+  });
+}
+
 fetch("/api/alliances")
   .then(res => res.json())
   .then(data => {
-    const container = document.getElementById("alliances-list");
-    if (data.alliances && data.alliances.length) {
-      data.alliances.forEach(a => {
-        const card = document.createElement("div");
-        card.classList.add("alliance-card");
-
-        const members = a.Members?.length
-          ? `<div class="alliance-section"><h3>Members</h3><ul>${a.Members.map(m => `<li>${m}</li>`).join("")}</ul></div>`
-          : "";
-
-        const associated = a.Associated?.length
-          ? `<div class="alliance-section"><h3>Associated</h3><ul>${a.Associated.map(m => `<li>${m}</li>`).join("")}</ul></div>`
-          : "";
-
-        const observers = a.Observers?.length
-          ? `<div class="alliance-section"><h3>Observers</h3><ul>${a.Observers.map(m => `<li>${m}</li>`).join("")}</ul></div>`
-          : "";
-
-        card.innerHTML = `
-          <h2>${a.Name || "Unnamed Alliance"}</h2>
-          <p>${a.Desc || "No description provided."}</p>
-          ${members || associated || observers
-            ? `${members}${associated}${observers}`
-            : "<p>No participants listed.</p>"}
-        `;
-
-        container.appendChild(card);
-      });
-    } else {
-      container.innerHTML = "<p>No alliances detected.</p>";
-    }
+    allAlliances = data.alliances || [];
+    renderAlliances(allAlliances);
   })
   .catch(err => {
     document.getElementById("alliances-list").innerHTML = `<p>Error loading alliances: ${err}</p>`;
   });
+
+document.getElementById("search-bar").addEventListener("input", e => {
+  const term = e.target.value.toLowerCase();
+  const filtered = allAlliances.filter(a =>
+    (a.Name && a.Name.toLowerCase().includes(term)) ||
+    (a.Desc && a.Desc.toLowerCase().includes(term)) ||
+    (a.Members && a.Members.some(m => m.toLowerCase().includes(term))) ||
+    (a.Associated && a.Associated.some(m => m.toLowerCase().includes(term))) ||
+    (a.Observers && a.Observers.some(m => m.toLowerCase().includes(term)))
+  );
+  renderAlliances(filtered);
+});
 </script>
 {% endblock %}

@@ -441,7 +441,6 @@ button:hover {
   z-index: 120;
 }
 
-/* hover keeps center while pulsing up slightly */
 .floating-btn:hover {
   background-color: #00a3a3;
   color: #fff;
@@ -449,7 +448,6 @@ button:hover {
   box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
 }
 
-/* optional subtle breathing effect for attention */
 @keyframes gentlePulse {
   0%, 100% { box-shadow: 0 0 10px #00ffcc; }
   50% { box-shadow: 0 0 25px #00ffcc; }

@@ -3,10 +3,41 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+<style>
+  #search-bar {
+    width: 60%;
+    max-width: 400px;
+    margin: 15px auto;
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    background-color: #111;
+    color: #eee;
+    font-size: 1rem;
+    transition: 0.2s border;
+  }
+  #search-bar:focus {
+    border-color: #00ff99;
+    outline: none;
+  }
+  .no-results {
+    text-align: center;
+    color: #aaa;
+    margin-top: 20px;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
   <h1>Global Trends Overview</h1>
+  <!-- Search bar -->
+  <input
+    type="text"
+    id="search-bar"
+    placeholder="Search by country, leader, or economic indicators..."
+    autocomplete="off">
+
   <div id="global-grid" class="grid-container"></div>
   <button onclick="window.location.href='/'" class="back-btn">Return to Command</button>
 {% endblock %}
@@ -42,71 +73,94 @@ function formatCurrency(value) {
   return "$" + num.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
-// === Data loading ===
+// === Global data handling ===
+let allNations = [];
+
+function renderNations(list) {
+  const container = document.getElementById("global-grid");
+  container.innerHTML = "";
+
+  if (!list.length) {
+    container.innerHTML = `<p class="no-results">No countries match your search.</p>`;
+    return;
+  }
+
+  list.forEach(n => {
+    const card = document.createElement("div");
+    card.classList.add("nation-card");
+
+    card.innerHTML = `
+      <h2>${n.Country}</h2>
+      <p><b>Leader:</b> ${n.Leader || "N/A"}</p>
+
+      <h3>Economy</h3>
+      <p><b>GDP:</b> ${formatCurrency(n.GDP)}</p>
+      <p><b>Debt:</b> ${formatCurrency(n.Debt)}</p>
+      <p><b>Debt-to-GDP:</b> ${formatPercent(n["Debt-to-GDP Ratio"])}</p>
+      <p><b>Inflation:</b> ${formatPercent(n["Inflation Rate"])}</p>
+      <p><b>Nominal GDP Growth:</b> ${formatPercent(n["Nominal GDP Growth"])}</p>
+      <p><b>Real GDP Growth:</b> ${formatPercent(n["Real GDP Growth"])}</p>
+      <p><b>Interest Rate:</b> ${formatPercent(n["Interest Rate"])}</p>
+      <p><b>Unemployment:</b> ${formatPercent(n["Unemployment Rate"])}</p>
+      <p><b>Budget Balance:</b> ${formatCurrency(n["Total Budget Balance"])}</p>
+      <p><b>Performance Capacity:</b> ${formatNumber(n["Performance Capacity"])}</p>
+
+      <h3>Demographics</h3>
+      <p><b>Population:</b> ${formatNumber(n.Population, 0)}</p>
+      <p><b>Population Growth:</b> ${formatPercent(n["Population Growth Rate"])}</p>
+      <p><b>Birth Rate:</b> ${formatPercent(n["Birth Rate"])}</p>
+      <p><b>Death Rate:</b> ${formatPercent(n["Death Rate"])}</p>
+      <p><b>Migration Rate:</b> ${formatPercent(n["Migration Rate"])}</p>
+
+      <h3>Technology & Industry</h3>
+      <p><b>Industrial Index:</b> ${formatNumber(n["Industrial Score"])}</p>
+      <p><b>Technology Index:</b> ${formatNumber(n["Technology Score"])}</p>
+      <p><b>R&D:</b> ${formatNumber(n["Research and Development"])}</p>
+      <p><b>Post-Industrial Level:</b> ${formatNumber(n["Post-Industrial Advancement"])}</p>
+
+      <h3>Strategic Power</h3>
+      <p><b>Power Projection:</b> ${formatNumber(n["Power Projection Index"])}</p>
+      <p><b>Firepower Index:</b> ${formatNumber(n["FIREPOWER INDEX"])}</p>
+
+      <h3>Energy & Environment</h3>
+      <p><b>Energy Resilience:</b> ${formatNumber(n["Energy Resilience Index"])}</p>
+      <p><b>Energy Capacity:</b> ${formatNumber(n["Total Energy Capacity (Exajoules)"])}</p>
+      <p><b>Trade Dependency:</b> ${formatNumber(n["Energy Trade Dependency Index"])}</p>
+      <p><b>CO₂ Emissions:</b> ${formatNumber(n["Carbon Net Emissions (MtCO₂)"])}</p>
+
+      <h3>Governance & Society</h3>
+      <p><b>Consumer Confidence:</b> ${formatPercent(n["Consumer Confidence Index"])}</p>
+      <p><b>Popularity:</b> ${formatPercent(n.Popularity)}</p>
+      <p><b>Sufficiency:</b> ${formatPercent(n.Sufficiency)}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
 fetch("/api/global_data")
   .then(res => res.json())
   .then(data => {
-    const container = document.getElementById("global-grid");
-    if (!data.nations || !data.nations.length) {
-      container.innerHTML = "<p>No global data available.</p>";
-      return;
-    }
-
-    data.nations.forEach(n => {
-      const card = document.createElement("div");
-      card.classList.add("nation-card");
-
-      card.innerHTML = `
-        <h2>${n.Country}</h2>
-        <p><b>Leader:</b> ${n.Leader || "N/A"}</p>
-
-        <h3>Economy</h3>
-        <p><b>GDP:</b> ${formatCurrency(n.GDP)}</p>
-        <p><b>Debt:</b> ${formatCurrency(n.Debt)}</p>
-        <p><b>Debt-to-GDP:</b> ${formatPercent(n["Debt-to-GDP Ratio"])}</p>
-        <p><b>Inflation:</b> ${formatPercent(n["Inflation Rate"])}</p>
-        <p><b>Nominal GDP Growth:</b> ${formatPercent(n["Nominal GDP Growth"])}</p>
-        <p><b>Real GDP Growth:</b> ${formatPercent(n["Real GDP Growth"])}</p>
-        <p><b>Interest Rate:</b> ${formatPercent(n["Interest Rate"])}</p>
-        <p><b>Unemployment:</b> ${formatPercent(n["Unemployment Rate"])}</p>
-        <p><b>Budget Balance:</b> ${formatCurrency(n["Total Budget Balance"])}</p>
-        <p><b>Performance Capacity:</b> ${formatNumber(n["Performance Capacity"])}</p>
-
-        <h3>Demographics</h3>
-        <p><b>Population:</b> ${formatNumber(n.Population, 0)}</p>
-        <p><b>Population Growth:</b> ${formatPercent(n["Population Growth Rate"])}</p>
-        <p><b>Birth Rate:</b> ${formatPercent(n["Birth Rate"])}</p>
-        <p><b>Death Rate:</b> ${formatPercent(n["Death Rate"])}</p>
-        <p><b>Migration Rate:</b> ${formatPercent(n["Migration Rate"])}</p>
-
-        <h3>Technology & Industry</h3>
-        <p><b>Industrial Index:</b> ${formatNumber(n["Industrial Score"])}</p>
-        <p><b>Technology Index:</b> ${formatNumber(n["Technology Score"])}</p>
-        <p><b>R&D:</b> ${formatNumber(n["Research and Development"])}</p>
-        <p><b>Post-Industrial Level:</b> ${formatNumber(n["Post-Industrial Advancement"])}</p>
-
-        <h3>Strategic Power</h3>
-        <p><b>Power Projection:</b> ${formatNumber(n["Power Projection Index"])}</p>
-        <p><b>Firepower Index:</b> ${formatNumber(n["FIREPOWER INDEX"])}</p>
-
-        <h3>Energy & Environment</h3>
-        <p><b>Energy Resilience:</b> ${formatNumber(n["Energy Resilience Index"])}</p>
-        <p><b>Energy Capacity:</b> ${formatNumber(n["Total Energy Capacity (Exajoules)"])}</p>
-        <p><b>Trade Dependency:</b> ${formatNumber(n["Energy Trade Dependency Index"])}</p>
-        <p><b>CO₂ Emissions:</b> ${formatNumber(n["Carbon Net Emissions (MtCO₂)"])}</p>
-
-        <h3>Governance & Society</h3>
-        <p><b>Consumer Confidence:</b> ${formatPercent(n["Consumer Confidence Index"])}</p>
-        <p><b>Popularity:</b> ${formatPercent(n.Popularity)}</p>
-        <p><b>Sufficiency:</b> ${formatPercent(n.Sufficiency)}</p>
-      `;
-
-      container.appendChild(card);
-    });
+    allNations = data.nations || [];
+    renderNations(allNations);
   })
   .catch(err => {
     document.getElementById("global-grid").innerHTML =
       `<p>Error loading global data: ${err}</p>`;
   });
+
+// === Search filter ===
+document.getElementById("search-bar").addEventListener("input", e => {
+  const term = e.target.value.toLowerCase();
+  const filtered = allNations.filter(n => {
+    return (
+      (n.Country && n.Country.toLowerCase().includes(term)) ||
+      (n.Leader && n.Leader.toLowerCase().includes(term)) ||
+      Object.values(n).some(v =>
+        typeof v === "string" && v.toLowerCase().includes(term)
+      )
+    );
+  });
+  renderNations(filtered);
+});
 </script>
 {% endblock %}
