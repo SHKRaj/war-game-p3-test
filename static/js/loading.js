@@ -164,13 +164,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function runIntro() {
-    if (backgrounds.length > 0) {
+    if (window.peasantMode) {
+      console.log("🖼️ Peasant Mode: skipping background images.");
+    } else if (backgrounds.length > 0) {
       bg.style.backgroundImage = `url(${backgrounds[0]})`;
       setInterval(changeBackground, 3000 + Math.random() * 2000);
     }
+
     setInterval(() => {
       tip.innerText = tips[Math.floor(Math.random() * tips.length)];
     }, 3000);
+
     setTimeout(updateProgress, 1000);
   }
 
