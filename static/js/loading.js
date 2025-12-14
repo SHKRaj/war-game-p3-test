@@ -136,6 +136,10 @@ document.addEventListener("DOMContentLoaded", function () {
     counter.textContent = progress.toFixed(0) + "%";
 
     if (progress >= 100) {
+      if (window.peasantMode) {
+        console.log("🎵 Peasant Mode: skipping music preloads");
+        window.preloadMusic = () => Promise.resolve();
+      }
       preloadMusic().then(() => {
         setTimeout(() => {
           if (loadingLogo) loadingLogo.classList.add("move-top-left");

@@ -3,6 +3,10 @@
 // CODE MADE WITH ASSISTANCE BY CHATGPT 
 
 document.addEventListener("DOMContentLoaded", () => {
+  if (window.peasantMode) {
+    console.log("🎧 Peasant Mode: skipping audio controller init.");
+    return;
+  }
   const bgMusic = document.getElementById("bg-music");
   const muteBtn = document.getElementById("mute-toggle");
   const settingsIcon = document.getElementById("settings-icon");
