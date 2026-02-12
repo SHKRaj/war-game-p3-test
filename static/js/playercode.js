@@ -1,4 +1,5 @@
-// CODE MADE WITH ASSISTANCE BY CHATGPT
+// Primary Playercode Database
+// SOME CODE MADE WITH ASSISTANCE BY CHATGPT
 
 window.initDashboard = async function () {
   const playercode = document.body.dataset.playercode || "TEST";
@@ -83,7 +84,7 @@ window.initDashboard = async function () {
         const total = updated.reduce((a, b) => a + b, 0);
 
         if (maxContracts && total > maxContracts) {
-          alert(`⚠️ Total ${total} exceeds max ${maxContracts}!`);
+          alert(`Total ${total} exceeds max ${maxContracts}!`);
           return;
         }
 
@@ -177,7 +178,7 @@ window.initDashboard = async function () {
         const out = await res.json();
 
         if (out.status === "policies updated") {
-          alert("✅ Policy change submitted — will take effect after daily sync.");
+          alert("Policy change submitted — will take effect after daily sync.");
         } else {
           alert(`⚠️ ${out.error || "Error saving policies"}`);
         }
