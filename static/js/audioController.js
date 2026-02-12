@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // trigger unlock by click or keypress
+  // TRIGGER UNLOCK
   document.body.addEventListener("click", unlockAudio, { once: true });
   document.body.addEventListener("keydown", unlockAudio, { once: true });
 
@@ -92,20 +92,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     }
 
-  // --- MUSIC SWITCHER (uses preloaded cache if available) ---
+  // --- MUSIC SWITCHER ---
   if (selector) {
     selector.addEventListener("change", (e) => {
       const newSrc = e.target.value;
       localStorage.setItem("bgMusicSrc", newSrc);
 
-      // See if it was preloaded in memory
+      // Check to See if it was preloaded in memory
       const cachedAudio = window.preloadedAudioCache?.[newSrc];
 
       bgMusic.pause();
       bgMusic.currentTime = 0;
 
       if (cachedAudio) {
-        // Use the already-buffered audio
+        // Use the already-buffered audio they had
         bgMusic.src = ""; // clear any pending source
         bgMusic.srcObject = null;
         cachedAudio.pause(); 
@@ -132,7 +132,7 @@ window.addEventListener("load", () => {
   const clickSound = document.getElementById("click-sound");
   if (!clickSound) return;
 
-  // set global volume very low
+  // setting their global volume very low
   clickSound.volume = 0.05;  // 5% of full volume
 
   document.addEventListener("mousedown", (e) => {
