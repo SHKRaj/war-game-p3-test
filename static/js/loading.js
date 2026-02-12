@@ -1,4 +1,5 @@
-// CODE MADE WITH ASSISTANCE BY CHATGPT
+// Loading Screen Code
+// SOME CODE MADE WITH ASSISTANCE BY CHATGPT
 
 document.addEventListener("DOMContentLoaded", function () {
   const counter = document.getElementById("loading-counter");
@@ -45,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(([player, intel]) => {
         if (player) sessionStorage.setItem("cachedPlayerData", JSON.stringify(player));
         if (intel) sessionStorage.setItem("cachedIntelData", JSON.stringify(intel));
-        console.log("✅ Preloaded player data for", savedCode);
+        console.log("Preloaded player data for", savedCode);
 
         setTimeout(() => {
           tip.style.transition = "opacity 0.6s ease";
@@ -57,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2500);
       })
       .catch(() => {
-        tip.textContent = "⚠️ Failed to prefetch player data. Proceeding offline mode.";
+        tip.textContent = "Failed to prefetch player data. Proceeding offline mode.";
       });
   }
 
@@ -69,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return Array.from(selector.options).map(opt => opt.value);
   }
 
-  // === PRELOAD MUSIC TRACKS ===
+  // === PReLOAD MUSIC TRACKS ===
   const musicTracks = getMusicTracks();
 
   const audioCache = {};
@@ -90,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
             tracksLoaded++;
             audioCache[src] = audio;
             if (tracksLoaded === musicTracks.length) {
-              console.log("✅ All music preloaded");
+              console.log("All music preloaded");
               resolve();
             }
           },
@@ -165,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function runIntro() {
     if (window.peasantMode) {
-      console.log("🖼️ Peasant Mode: skipping background images.");
+      console.log("Peasant Mode: skipping background images.");
     } else if (backgrounds.length > 0) {
       bg.style.backgroundImage = `url(${backgrounds[0]})`;
       setInterval(changeBackground, 3000 + Math.random() * 2000);
