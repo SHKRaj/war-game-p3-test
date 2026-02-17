@@ -14,9 +14,9 @@ window.initDashboard = async function () {
   let playerData = null;
   const cached = sessionStorage.getItem("cachedPlayerData");
   if (cached) {
-    console.log("⚡ Using cached player data");
+    console.log("Using cached player data");
     playerData = JSON.parse(cached);
-    sessionStorage.removeItem("cachedPlayerData"); // clear to avoid stale data
+    sessionStorage.removeItem("cachedPlayerData");
   } else {
     try {
       const res = await fetch(`/api/player/${playercode}`);
@@ -121,7 +121,7 @@ window.initDashboard = async function () {
     };
 
     try {
-      // current official policies from Sheets
+      // current official policies from my sheets
       const current = [];
       for (let i = 59; i < 69; i++) current.push(rows[i]?.[12] || "");
 
@@ -152,7 +152,7 @@ window.initDashboard = async function () {
         saveBtn.disabled = true;
         saveBtn.textContent = "⏳ Pending daily update...";
       } else {
-        // clear stale pending if sheet has caught up
+        // clear stale pending if my sheet has caught up
         localStorage.removeItem("pendingPolicies");
         saveBtn.disabled = false;
         saveBtn.textContent = "Save Policies";
@@ -164,7 +164,7 @@ window.initDashboard = async function () {
           document.getElementById(`policy-${l}`).value
         );
 
-        // Save to localStorage as pending
+        // Save to their localStorage as pending
         localStorage.setItem("pendingPolicies", JSON.stringify(selected));
         localStorage.setItem("pendingTimestamp", Date.now());
         saveBtn.disabled = true;
